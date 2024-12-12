@@ -5,9 +5,41 @@ import User from "../models/user.model.mjs"
 import jwt from "jsonwebtoken"
 
 
+export const verifyUser = async (req,res) => {
+    try{
+        const {token} = req.query;
+        console.log("this is the token to verify",token)
 
-export const getHome = (req, res) => {
-    return req.user ? res.json({message:"welcome to home page", data:req.user}) : res.json({error:"you are not authenticated"})
+        console.log("1")
+
+        if(!token) return res.status(400).json({error:"pls a token is required"})
+
+        const decoded = jwt.verify(token, "jwtSecret")
+
+        if(!decoded) return res.status(400).json({message:`invalid token ${decoded}`})
+
+        const userId = decoded?.user
+
+        const verifiedUser = await User.findOne({_id:userId})
+        
+
+        if(verifiedUser.isVerified){
+            return res.status(200).json({message:"you are already verified"})
+        }
+
+        verifiedUser.isVerified = true
+    
+        await verifiedUser.save()
+
+        console.log("you are successfully verified", verifiedUser)
+
+        res.status(200).json({message:'you are successfully verified. pls login'})
+
+
+
+    }catch(error){
+        res.status(500).json({message:"token is expired"})
+    }
 }
 
 
@@ -45,9 +77,9 @@ const {name, username, email, password, profilePic} = req.body
     if(newUser) {
          generateToken(newUser._id, res)
         
-      
+        const token = jwt.sign({user:newUser._id}, "jwtSecret", {expiresIn:"60s"})
 
-        res.status(200).json({
+        res.status(200).json({user:{
             _id:newUser._id,
             name:newUser.name,
             username:newUser.username,
@@ -56,7 +88,7 @@ const {name, username, email, password, profilePic} = req.body
             followers:newUser.followers,
             following:newUser.following,
             profilecover:newUser.profilecover
-        })
+        }, message:`we sent a verification linl to your email`, link:`http://localhost:9000/verify-user?token=${token}`})
     } else {
         return res.status(400).json({
             error:"Invalid user data"
@@ -71,8 +103,11 @@ export const login = async (req, res) => {
    try{
     const {username,password} = req.body
 
+    console.log("this is the user", username, password)
     const user = await User.findOne({username}).populate("followers")
     if(!user) return res.status(404).json({error:{type:"nameError"}})
+
+    console.log("hey we finally got the suer", user)
 
 
     const wrongPasword = await bcrypt.compare(password || "", user.password)

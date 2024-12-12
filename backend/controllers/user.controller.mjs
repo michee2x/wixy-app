@@ -2,6 +2,16 @@ import User from "../models/user.model.mjs"
 import bcrypt from "bcryptjs"
 import cloudinary from "cloudinary"
 
+export const verifyUser = () => {
+    try{
+        
+
+    }catch(error){
+        console.log("this is the error")
+    }
+}
+
+
 export const getUserProfile = async (req, res) => {
     try{
         const userId = req.params.id.toString()

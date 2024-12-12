@@ -1,33 +1,83 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import { ErrorAlert } from "../Components/ErrorAlert";
 import { storeFieldInLocalStorage } from "../Utils/LocalStorage";
+import { ContextAPI } from "../ContextApi";
+import { InputComponent } from "../Components/Input";
 
 export const AuthPage = () => {
+  const [show, setShow] = useState(false)
+  const [AlertType, setAlertType] = useState("")
+  const {darkmode, setDarkMode} = ContextAPI()
+  const [login, setLogin] = useState(true)
+  const [data, setData] = useState(
+    {name:"", username:"",email:"", password:""} 
+  )
+
+    useEffect(() => {
+        const doc = document.body
+        if(darkmode){
+            doc.classList.add("dark");
+        }else{
+            doc.classList.remove("dark")
+        }
+    }, [darkmode])
+
+    const AuthFunc = async (e) => {
+      e.preventDefault()
+      try{
+            console.log("ths is the inpuet benene", data)
+
+        const res = await fetch(`http://localhost:7000/api/auth/${login ? "login" : "signup"}`, {
+          method:"POST",
+          headers:{"Content-Type":"application/json"},
+          body:JSON.stringify({
+            ...data
+          })
+        })
+
+        if(!res.ok){
+          setShow(true)
+          setAlertType("bad")
+        } else {
+          setShow(true)
+          setAlertType("good")
+        }
+
+      }catch(error){
+        console.log(error)
+      }
+    }
     return (
         <>
-        <div className="bg-white py-6 sm:py-8 lg:py-12">
-          <ErrorAlert AlertType={true} />
-  <div className="mx-auto max-w-screen-2xl px-4 md:px-8">
-    <h2 className="mb-4 text-center text-2xl font-bold text-gray-800 md:mb-8 lg:text-3xl">Login</h2>
+        <div className="bg-white h-screen w-screen dark:bg-gray-900 py-6 sm:py-8 lg:py-12">
+          <ErrorAlert AlertType={AlertType} setShow={setShow} show={show}/>
+  <div className="mx-auto dark:bg-gray-900 max-w-screen-2xl px-4 md:px-8">
+    <h2 className="mb-4 text-center text-2xl dark:text-gray-100 font-bold text-gray-800 md:mb-8 lg:text-3xl">{login ? "Login" : "SignUp"}</h2>
 
-    <form className="mx-auto max-w-lg rounded-lg border">
+    <form onSubmit={AuthFunc} className="mx-auto max-w-lg rounded-lg border">
       <div className="flex flex-col gap-4 p-4 md:p-8">
-        <div>
-          <label for="email" className="mb-2 inline-block text-sm text-gray-800 sm:text-base">Email</label>
-          <input name="email" className="w-full rounded border bg-gray-50 px-3 py-2 text-gray-800 outline-none ring-indigo-300 transition duration-100 focus:ring" />
+        <div className={`${login ? "hidden" : "block"}`}>
+          <InputComponent data={data} setData={setData} type="text" name="name" label="Name" />
         </div>
 
         <div>
-          <label for="password" className="mb-2 inline-block text-sm text-gray-800 sm:text-base">Password</label>
-          <input name="password" className="w-full rounded border bg-gray-50 px-3 py-2 text-gray-800 outline-none ring-indigo-300 transition duration-100 focus:ring" />
+          <InputComponent data={data} setData={setData} type="text" name="username" label="UserName" />
+        </div>
+        
+        <div className={`${login ? "hidden" : "block"}`}>
+          <InputComponent data={data} setData={setData} type="email" name="email" label="Email" />
+        </div>
+
+        <div >
+          <InputComponent data={data} setData={setData} type="password" name="password" label="Password" />
         </div>
 
         <button onClick={() => storeFieldInLocalStorage("wixy-cookie", "there is a cookie")} className="block rounded-lg bg-gray-800 px-8 py-3 text-center text-sm font-semibold text-white outline-none
-         ring-gray-300 transition duration-100 hover:bg-gray-700 focus-visible:ring active:bg-gray-600 md:text-base">Log in</button>
+         ring-gray-300 transition duration-100 hover:bg-gray-700 focus-visible:ring active:bg-gray-600 md:text-base">{login ? "Login" : "SignUp"}</button>
 
         <div className="relative flex items-center justify-center">
           <span className="absolute inset-x-0 h-px bg-gray-300"></span>
-          <span className="relative bg-white px-4 text-sm text-gray-400">Log in with social</span>
+          <span className="relative bg-white px-4 dark:bg-gray-900 dark:text-gray-100 text-sm text-gray-400">Log in with social</span>
         </div>
 
         <button className="flex items-center justify-center gap-2 rounded-lg bg-blue-500 px-8 py-3 text-center text-sm font-semibold text-white outline-none ring-blue-300 transition duration-100 hover:bg-blue-600 focus-visible:ring active:bg-blue-700 md:text-base">
@@ -50,8 +100,8 @@ export const AuthPage = () => {
         </button>
       </div>
 
-      <div className="flex items-center justify-center bg-gray-100 p-4">
-        <p classNameclassName="text-center text-sm text-gray-500">Don't have an account? <a href="#" className="text-indigo-500 transition duration-100 hover:text-indigo-600 active:text-indigo-700">Register</a></p>
+      <div className="flex items-center justify-center dark:bg-gray-800 bg-gray-100 p-4">
+        <p className="text-center text-sm text-gray-500 dark:text-gray-50">{login ? "Don't have an account?" : "Already have an account?"} <span onClick={() => setLogin(prev => !prev)} className="text-indigo-500 transition duration-100 cursor-pointer hover:text-indigo-600 active:text-indigo-700">{login ? "register" : "login"}</span></p>
       </div>
     </form>
   </div>

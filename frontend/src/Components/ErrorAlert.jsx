@@ -1,16 +1,10 @@
 import React, { useEffect, useState } from "react"
 
-export const ErrorAlert = ({AlertType}) => {
-    const [show, setShow] = useState(true)
+export const ErrorAlert = ({AlertType, show, setShow}) => {
 
-    if(show) {
-        setTimeout(() => {
-            setShow(false)
-        }, 3000)
-    }
     return (
         <>
-        {AlertType === false && <div className={`w-[80%] transition-all ${show ? "top-10" : "-top-20"} duration-200 shadow-md shadow-black/20 rounded-md h-auto left-1/2 transform -translate-x-1/2 lg:w-1/3 fixed top-0 text-white bg-red-500`}>
+        {AlertType === "bad" && <div className={`rounded-md transition-all duration-300 ${show ? "top-10" : "-top-20"} fixed lg:w-1/3 left-1/2 transform -translate-x-1/2 w-[80%] shadow-md shadow-black/20 text-white bg-red-500`}>
     <div className="container flex items-center justify-between px-6 py-4 mx-auto">
         <div className="flex">
             <svg viewBox="0 0 40 40" className="w-6 h-6 fill-current">
@@ -29,7 +23,7 @@ export const ErrorAlert = ({AlertType}) => {
     </div>
 </div>}
 
-{AlertType === true && <div className={`rounded-md transition-all duration-300 ${show ? "top-10" : "-top-20"} fixed lg:w-1/3 left-1/2 transform -translate-x-1/2 w-[80%] shadow-md shadow-black/20 text-white bg-emerald-500`}>
+{AlertType === "good" && <div className={`rounded-md transition-all duration-300 ${show ? "top-10" : "-top-20"} fixed lg:w-1/3 left-1/2 transform -translate-x-1/2 w-[80%] shadow-md shadow-black/20 text-white bg-emerald-500`}>
     <div className="container flex items-center justify-between px-6 py-4 mx-auto">
         <div className="flex">
             <svg viewBox="0 0 40 40" className="w-6 h-6 fill-current">

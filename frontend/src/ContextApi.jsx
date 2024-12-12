@@ -9,9 +9,10 @@ export const ContextAPI = () => {
 export const ContextProvider = ({children}) => {
     const [showSideBar, setShowSideBar] = useState(false);
 const [showCookie, setShowCookie] = useState(false);
+const [darkmode,setDarkMode] = useState(true)
 
 
-    return <Context.Provider value={{showSideBar, setShowSideBar, showCookie, setShowCookie}}>
+    return <Context.Provider value={{showSideBar, setShowSideBar,darkmode, setDarkMode, showCookie, setShowCookie}}>
 {children}
     </Context.Provider>
 }

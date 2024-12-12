@@ -6,6 +6,7 @@ import { protectedRoute} from "../middleware/protectedRoute.mjs";
 const router = express.Router()
 
 router.get("/userprofile/:id",protectedRoute, getUserProfile)
+router.get("/verify-user",protectedRoute, getUserProfile)
 router.post("/searchprofile",protectedRoute, searchProfile)
 router.post("/follow/:id",protectedRoute, follow)
 router.post("/updateProfile",protectedRoute, updateProfile)
