@@ -3,6 +3,7 @@ import { ErrorAlert } from "../Components/ErrorAlert";
 import { storeFieldInLocalStorage } from "../Utils/LocalStorage";
 import { ContextAPI } from "../ContextApi";
 import { InputComponent } from "../Components/Input";
+import { Navigate } from "react-router-dom";
 
 export const AuthPage = () => {
   const [show, setShow] = useState(false)
@@ -12,6 +13,11 @@ export const AuthPage = () => {
   const [data, setData] = useState(
     {name:"", username:"",email:"", password:""} 
   )
+  const [navigate, setNavigate] = useState(false)
+
+  const {loggedUser, setLoggedUser} = ContextAPI()
+
+
 
     useEffect(() => {
         const doc = document.body
@@ -39,14 +45,26 @@ export const AuthPage = () => {
           setShow(true)
           setAlertType("bad")
         } else {
-          setShow(true)
+          const logged_user = await res.json()
+          console.log("ths is the logged-user", logged_user?.loggedUser)
+          localStorage.setItem("logged-user", JSON.stringify(logged_user?.loggedUser))
+          console.log("this is the localStorage", loggedUser)
+          setLoggedUser(logged_user?.loggedUser)
           setAlertType("good")
+          setShow(true)
         }
 
       }catch(error){
         console.log(error)
+      }finally{
+        setNavigate(true)
       }
     }
+
+    if(navigate){
+      return <Navigate to={"/dashboard/id"} />
+    }
+
     return (
         <>
         <div className="bg-white h-screen w-screen dark:bg-gray-900 py-6 sm:py-8 lg:py-12">

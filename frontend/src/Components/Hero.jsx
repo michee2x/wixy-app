@@ -11,7 +11,7 @@ export const Hero = () => {
             <div className="max-w-xl ">
                 <h2 className="text-3xl font-semibold text-gray-800 dark:text-white lg:text-4xl animate__animated animate__flipInY animate__delay-1s">We Provide Your <span className="text-blue-600 dark:text-blue-400">Ideas</span></h2>
 
-                <p className="mt-4 text-sm text-gray-500 dark:text-gray-400 lg:text-base">Step into the world of wix – where style, quality, and value come together. Explore our collections today and find exactly what you’ve been looking for!
+                <p className="mt-4 text-sm text-gray-500 dark:text-gray-400 lg:text-base">Step into the world of wixy – where style, quality, and value come together. Explore our collections today, connect nation wide with buyers and sellers and find exactly what you’ve been looking for! <br />🤩🇳🇬🎁
 </p>
 
                 <div className="flex flex-col mt-6 space-y-3 lg:space-y-0 lg:flex-row">
@@ -22,8 +22,8 @@ export const Hero = () => {
         </div>
 
         <div className="w-full lg:mr-5 h-[45vh] lg:rounded-xl lg:w-1/2 lg:h-auto">
-            <div className="w-full lg:rounded-xl h-full bg-cover" style={{backgroundImage: `url("https://i.imgur.com/aTE3WGS.jpeg")`, backgroundPosition:"center", backgroundRepeat:"no-repeat", backgroundSize:"cover"}}>
-                <div className="w-full lg:rounded-xl h-full bg-black opacity-25"></div>
+            <div className="w-full lg:rounded-xl h-full bg-gray-900 flex items-center justify-center bg-cover">
+                <img src="https://i.imgur.com/95Vxv5f.png" className="w-full h-full object-cover"/>
             </div>
         </div>
     </div>

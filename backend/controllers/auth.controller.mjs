@@ -88,7 +88,7 @@ const {name, username, email, password, profilePic} = req.body
             followers:newUser.followers,
             following:newUser.following,
             profilecover:newUser.profilecover
-        }, message:`we sent a verification linl to your email`, link:`http://localhost:9000/verify-user?token=${token}`})
+        }, message:`we sent a verification linl to your email`, link:`http://localhost:5173/verifytoken?token=${token}`})
     } else {
         return res.status(400).json({
             error:"Invalid user data"
@@ -116,6 +116,11 @@ export const login = async (req, res) => {
     if(!wrongPasword){
         return res.status(401).json({error:{type:"password"}})
 }
+  if(!user.isVerified){
+    const token = jwt.sign({user:user._id}, "jwtSecret", {expiresIn:"60s"})
+
+    return res.status(401).json({message:"you are not verified yet", link:`http://localhost:5173/verifytoken?token=${token}`})
+  }
    generateToken(user._id, res)
     res.json({loggedUser:user})
 

@@ -1,6 +1,8 @@
 import React  from "react";
 
 export const SettingsPage = () => {
+
+    
     return (
         <div className="min-h-screen w-full bg-gray-100 dark:bg-gray-900 flex justify-center items-center dark:text-gray-100">
             <section className="max-w-4xl p-6 mx-auto bg-white rounded-md shadow-md dark:bg-gray-800">
