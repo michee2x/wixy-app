@@ -3,6 +3,8 @@ import data from '../db/user.data.mjs'
 import bcrypt from "bcryptjs"
 import User from "../models/user.model.mjs"
 import jwt from "jsonwebtoken"
+import { returnVerifyTemplate } from "../verifyTemplate.mjs"
+import {sendMail} from "../utils/sendMail.mjs"
 
 
 export const verifyUser = async (req,res) => {
@@ -77,9 +79,11 @@ const {name, username, email, password, profilePic} = req.body
     if(newUser) {
          generateToken(newUser._id, res)
         
-        const token = jwt.sign({user:newUser._id}, "jwtSecret", {expiresIn:"60s"})
+        const token = jwt.sign({user:newUser._id}, "jwtSecret", {expiresIn:"2h"})
 
-        res.status(200).json({user:{
+        await sendMail(returnVerifyTemplate(newUser.name, `https://wixy-app.onrender.com/verifytoken?token=${token}`), newUser.email, "SignUp to Wixy Marketplace")
+
+        res.status(200).json({loggedUser:{
             _id:newUser._id,
             name:newUser.name,
             username:newUser.username,
@@ -89,6 +93,8 @@ const {name, username, email, password, profilePic} = req.body
             following:newUser.following,
             profilecover:newUser.profilecover
         }, message:`we sent a verification linl to your email`, link:`http://localhost:5173/verifytoken?token=${token}`})
+    
+    
     } else {
         return res.status(400).json({
             error:"Invalid user data"
@@ -131,23 +137,41 @@ console.log("there was an error in signup controller: ", error)
 
 export const logout = (req, res) => {
     try{
-        res.cookie("jwtToken", "", {
-        maxAge:0
-    })
-    res.json({message:"logged out successfully"})
+        res.clearCookie("jwtToken")
+    res.status(200).json({message:"logged out successfully"})
     }catch (error) {
         console.log("loggedout successful")
     }
 }
-const  generateToken = (payload, res) => {
+/*  const  generateToken = (payload, res) => {
+    console.log("i am generating it...")
     try{
     const token = jwt.sign({payload}, "thi is jwt secret", {
         expiresIn:`15d`
     })
     res.cookie("jwtToken", token, {
         maxAge: 15 * 24 * 60 * 60 * 1000,
-        sameSite:"strict",
+        sameSite:"None",
         secure:false,
+        httpOnly:true,
+    })
+
+    } catch (error){
+console.log("there was an error in signup controller: ", error)
+    }
+}  */
+
+
+const  generateToken = (payload, res) => {
+    try{
+    const token = jwt.sign({payload}, "thi is jwt secret", {
+        expiresIn:`15d`
+    })
+    res.cookie("jwtToken", token, {
+        maxAge: 1000 * 60 * 60 * 24 * 365,
+        sameSite:"Strict",
+        secure:false,
+        httpOnly:true
     })
 
     } catch (error){

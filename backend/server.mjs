@@ -1,5 +1,4 @@
 import express from "express"
-const app = express()
 import cors from "cors"
 import authroute from "./routes/auth.route.mjs"
 import {connectMongoDB} from "./db/connectMongoDB.mjs"
@@ -7,11 +6,13 @@ import postroute from "./routes/post.route.mjs"
 import userroute from "./routes/user.route.mjs"
 import cookieParser from "cookie-parser"
 import notificationRoute from "./routes/notification.route.mjs"
+import messageRoute from "./routes/message.route.mjs"
 import multer from "multer"
 import { protectedRoute } from "./middleware/protectedRoute.mjs"
 import { createPost } from "./controllers/post.controller.mjs"
 import path from "path"
 import dotenv from "dotenv"
+import {server, app}from "./socket/scoket.mjs"
 
 import {v2 as cloudinary} from 'cloudinary';
 
@@ -41,18 +42,18 @@ const imageUpload = multer({storage:imageStorage})
 
 app.use(cookieParser())
 app.use(express.urlencoded({extended:true}))
-app.use(cors({credentials:true, origin:"http://localhost:5173"}))
+app.use(cors({credentials:true, origin:"http://localhost:5173", methods:["POST", "GET"]}))
 app.use("/api/post/createpost",protectedRoute, imageUpload.single("file"), createPost)
 app.use(express.json())
 
-
+app.use('/api/message', messageRoute)
 app.use("/api/auth", authroute)
 app.use('/api/post', postroute)
 app.use('/api/user', userroute)
 app.use('/api/notification', notificationRoute)
 
 
-app.listen(7000, () => {
+server.listen(7000, () => {
     connectMongoDB() 
     console.log("app running on port 7000...")
 })

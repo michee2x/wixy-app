@@ -1,4 +1,4 @@
-import React, {createContext, useContext, useState, useEffect} from "react"
+import React, {createContext, useContext, useState} from "react"
 
 const Context = createContext()
 
@@ -11,23 +11,15 @@ export const ContextProvider = ({children}) => {
     const [showSideBar, setShowSideBar] = useState(false);
     const [showCookie, setShowCookie] = useState(false);
     const [darkmode,setDarkMode] = useState(true)
-    const [chats, setChats] = useState({
-        chatMode:false,
-        contact:[
-            {name:"david", roomId:"123", lastMessage:"how far. what's up..", profilePic:""},
-            {name:"michael", roomId:"123", lastMessage:"how far. what's up..", profilePic:""},
-            {name:"bomo", roomId:"123", lastMessage:"how far. what's up..", profilePic:""},
-            {name:"faith", roomId:"123", lastMessage:"how far. what's up..", profilePic:""}
-        ]
-    })
     const [selectedChat, setSelectedChat] = useState({})
+    const [chatMode, setChatMode] = useState(false)
 
     return <Context.Provider value={{
+        chatMode,
+        setChatMode,
         showSideBar,
         selectedChat, 
-        setSelectedChat, 
-        chats, 
-        setChats, 
+        setSelectedChat,
         loggedUser, 
         setLoggedUser, 
         setShowSideBar, 

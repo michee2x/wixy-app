@@ -38,7 +38,8 @@ export const AuthPage = () => {
           headers:{"Content-Type":"application/json"},
           body:JSON.stringify({
             ...data
-          })
+          }),
+          credentials:"include"
         })
 
         if(!res.ok){
@@ -46,12 +47,14 @@ export const AuthPage = () => {
           setAlertType("bad")
         } else {
           const logged_user = await res.json()
-          console.log("ths is the logged-user", logged_user?.loggedUser)
+          if(logged_user){
+            console.log("ths is the logged-user", logged_user?.loggedUser)
           localStorage.setItem("logged-user", JSON.stringify(logged_user?.loggedUser))
           console.log("this is the localStorage", loggedUser)
           setLoggedUser(logged_user?.loggedUser)
           setAlertType("good")
           setShow(true)
+          }
         }
 
       }catch(error){

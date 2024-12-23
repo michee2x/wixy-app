@@ -9,7 +9,7 @@ export const Footer = () => {
             <div className="w-full -mx-6 lg:w-2/5">
                 <div className="px-6">
                                     <a href="/" className="">
-                    <code className='text-gray-800 flex gap-3 items-center text-xl font-extrabold'><img class="w-auto transform rotate-180 h-6" src="https://merakiui.com/images/logo.svg" alt="" /><span className="text-blue-600 opacity-50"> i x y</span></code>
+                    <code className='text-gray-800 flex gap-3 items-center text-xl font-extrabold'><img className="w-auto transform rotate-180 h-6" src="https://merakiui.com/images/logo.svg" alt="" /><span className="text-blue-600 opacity-50"> i x y</span></code>
                 </a>
 
                     <p className="max-w-sm mt-2 text-gray-500 dark:text-gray-400">Join 31,000+ other and never miss out on new tips, tutorials, and more.</p>

@@ -4,10 +4,9 @@ import { Hero } from './Components/Hero'
 import { Footer } from './Components/Footer'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import Layout from './Layout'
-import {Home, CartPage, AuthPage, ProductPage, _404Page, ProfilePage, SettingsPage, DashBoardPage} from "./Pages/index"
+import {Home, CartPage, AuthPage, ProductPage, ChannelsPage, ChatPage, _404Page, ProfilePage, SettingsPage, DashBoardPage, MarketPlace, AboutProduct} from "./Pages/index"
 import Contact from './Pages/Contact'
 import About from './Pages/About'
-import ChatPage from './Pages/ChatPage'
 import VerifyUser from './Pages/VerifyUser'
 
 function App() {
@@ -27,7 +26,11 @@ function App() {
           <Route path='/dashBoard/:id' element={<DashBoardPage />} />
           <Route path='/contact' element={<Contact />} />
           <Route path='/about' element={<About />} />
-          <Route path='/chats' element={<ChatPage />} />
+          <Route path='/channels' element={<ChannelsPage />} />
+          <Route path='/chat/:id' element={<ChatPage />} />
+          <Route path='/marketplace' element={<MarketPlace />} />
+          <Route path='/aboutproduct/:id' element={<AboutProduct />} />
+
       </Route>
 
       <Route path='/auth' element={<AuthPage />} />
