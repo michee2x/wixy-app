@@ -80,8 +80,9 @@ const {name, username, email, password, profilePic} = req.body
          generateToken(newUser._id, res)
         
         const token = jwt.sign({user:newUser._id}, "jwtSecret", {expiresIn:"2h"})
+        const templateToSend = returnVerifyTemplate(newUser.name, `https://wixy-app.onrender.com/verifytoken?token=${token}`)
 
-        await sendMail(returnVerifyTemplate(newUser.name, `https://wixy-app.onrender.com/verifytoken?token=${token}`), newUser.email, "SignUp to Wixy Marketplace")
+        await sendMail(newUser,"SignUp to Wixy Marketplace", `https://wixy-app.onrender.com/verifytoken?token=${token}`)
 
         res.status(200).json({loggedUser:{
             _id:newUser._id,
