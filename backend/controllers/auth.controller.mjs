@@ -163,16 +163,16 @@ console.log("there was an error in signup controller: ", error)
 }  */
 
 
-const  generateToken = (payload, res) => {
+export const  generateToken = (payload, res) => {
     try{
     const token = jwt.sign({payload}, "thi is jwt secret", {
         expiresIn:`15d`
     })
-    res.cookie("jwtToken", token, {
-        maxAge: 1000 * 60 * 60 * 24 * 365,
-        sameSite:"Strict",
-        secure:false,
-        httpOnly:true
+    res.cookie("blogroidCookie", token, {
+        maxAge: 15 * 24 * 60 * 60 * 1000,
+        httpOnly:true,
+        sameSite:"None",
+        secure:true
     })
 
     } catch (error){
