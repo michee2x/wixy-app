@@ -1,4 +1,4 @@
-important mongoose from "mongoose"
+import mongoose from "mongoose"
 
 export const connectMongoDB = async () => {
     try{
