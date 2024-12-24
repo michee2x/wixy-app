@@ -45,7 +45,7 @@ export const ChannelsPage = () => {
         const fetchMessages = async () => {
             console.log("thisis the receiverID oooo: ", receiverId)
             try{
-                const res = await fetch(`http://localhost:7000/api/message/getconversation?chatUser=${receiverId}`, {
+                const res = await fetch(`https://wixy-backend.onrender.com/api/message/getconversation?chatUser=${receiverId}`, {
                     method:"GET",
                     credentials:"include"
                 })
