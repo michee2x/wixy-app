@@ -106,7 +106,7 @@ export const ChatPage = () => {
         if(id){
             try{
              
-             const res = await fetch(`http://localhost:7000/api/message/sendmessage?receiverId=${id}`, {
+             const res = await fetch(`https://wixy-backend.onrender.com/api/message/sendmessage?receiverId=${id}`, {
                 method:"POST",
                 headers:{"Content-Type" : "application/json"},
                 body:JSON.stringify({
@@ -144,7 +144,7 @@ console.log("thsi is rh conversaton for paruser", messages)
         const fetchMessages = async () => {
             console.log("thisis the receiverID oooo: ", id)
             try{
-                const res = await fetch(`http://localhost:7000/api/message/getconversation?chatUser=${id}`, {
+                const res = await fetch(`https://wixy-backend.onrender.com/api/message/getconversation?chatUser=${id}`, {
                     method:"GET",
                     credentials:"include"
                 })
