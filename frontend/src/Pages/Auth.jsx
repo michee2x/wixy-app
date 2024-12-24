@@ -33,7 +33,7 @@ export const AuthPage = () => {
       try{
             console.log("ths is the inpuet benene", data)
 
-        const res = await fetch(`https://wixy-app.onrender.com/api/auth/${login ? "login" : "signup"}`, {
+        const res = await fetch(`https://wixy-backend.onrender.com/api/auth/${login ? "login" : "signup"}`, {
           method:"POST",
           headers:{"Content-Type":"application/json"},
           body:JSON.stringify({
