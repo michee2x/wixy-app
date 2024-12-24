@@ -9,7 +9,7 @@ export const useListenMessages = () => {
     const sendReceivedMessage = async (id) => {
         try{
 
-            const res = await fetch(`http://localhost:7000/api/message/receivedmessage?id=${id}`, {
+            const res = await fetch(`https://wixy-backend.onrender.com/api/message/receivedmessage?id=${id}`, {
                 method:"GET",
                 credentials:"include"
             })
