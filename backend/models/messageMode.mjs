@@ -14,6 +14,11 @@ const messageSchema = Schema({
     message:{
         type:String,
         required: true
+    },
+    status:{
+        type:String,
+        enum:["sent", "received", "read"],
+        require:true
     }
 }, {timestamps:true})
 

@@ -13,8 +13,11 @@ export const ContextProvider = ({children}) => {
     const [darkmode,setDarkMode] = useState(true)
     const [selectedChat, setSelectedChat] = useState({})
     const [chatMode, setChatMode] = useState(false)
+    const [loading, setLoading] = useState(false)
 
     return <Context.Provider value={{
+        loading,
+        setLoading,
         chatMode,
         setChatMode,
         showSideBar,

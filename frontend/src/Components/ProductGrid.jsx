@@ -22,9 +22,9 @@ export const ProductGrid = ({section}) => {
     </div>
 
     <div className="grid gap-x-4 gap-y-8 sm:grid-cols-2 md:gap-x-6 lg:grid-cols-3 xl:grid-cols-4">
-      {ProdctsData2.map(e => {
+      {ProdctsData2.map((e, index) => {
         return (
-            <>
+            <div key={index}>
             {/* <!-- product - start --> */}
       {e.beforePrice && <Link data-aos="fade-up" to={"/product/sahfpioah"}>
         <p className="group relative mb-2 block h-80 overflow-hidden rounded-lg bg-gray-100 dark:bg-gray-900 lg:mb-3">
@@ -60,7 +60,7 @@ export const ProductGrid = ({section}) => {
       </Link>}
       {/* <!-- product - end --> */}
 
-            </>
+            </div>
         )
       })}
     </div>

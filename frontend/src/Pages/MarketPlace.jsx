@@ -7,7 +7,7 @@ export const MarketPlace = () => {
   const [catOption, setCatOption] = useState("")
   return (
     <>
-    <div className='w-full relative pt-16 md:px-24 min-h-screen dark:bg-gray-900'>
+    <div className='w-full relative pt-16 min-h-screen dark:bg-gray-950'>
       <div className='w-full relative h-auto flex flex-col gap-10'>
             {[1,2,3,4,5].map(e => {
               return <ProductSection setCatOption={setCatOption}/>

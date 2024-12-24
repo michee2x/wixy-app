@@ -64,16 +64,20 @@ export const AuthPage = () => {
       }
     }
 
-    if(navigate){
+    if(navigate && login){
       return <Navigate to={"/dashboard/id"} />
+    }
+
+    else if(navigate && !login){
+      return <Navigate to={"/sentatoken"} />
     }
 
     return (
         <>
-        <div className="bg-white h-screen w-screen dark:bg-gray-900 py-6 sm:py-8 lg:py-12">
+        <div className="bg-white h-screen w-screen dark:bg-gray-950 py-6 sm:py-8 lg:py-12">
           <ErrorAlert AlertType={AlertType} setShow={setShow} show={show}/>
-  <div className="mx-auto dark:bg-gray-900 max-w-screen-2xl px-4 md:px-8">
-    <h2 className="mb-4 text-center text-2xl dark:text-gray-100 font-bold text-gray-800 md:mb-8 lg:text-3xl">{login ? "Login" : "SignUp"}</h2>
+  <div className="mx-auto dark:bg-gray-950 max-w-screen-2xl px-4 md:px-8">
+    <h2 className="mb-4 text-center text-2xl dark:text-gray-100 font-bold text-gray-950 md:mb-8 lg:text-3xl">{login ? "Login" : "SignUp"}</h2>
 
     <form onSubmit={AuthFunc} className="mx-auto max-w-lg rounded-lg border">
       <div className="flex flex-col gap-4 p-4 md:p-8">

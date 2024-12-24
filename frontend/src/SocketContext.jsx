@@ -48,6 +48,9 @@ export const SocketContextProvider = ({children}) => {
             setOnlineUsers(data)
 
         })
+            socket.on("newMessage", (data) => {
+                console.log("this is from newMessage event", data);
+            })
 
         return () => socket.close()
         } else {

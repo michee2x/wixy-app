@@ -29,7 +29,8 @@ export const sendMessage = async (req, res) => {
         const newMessage = new Message({
             senderId,
             receiverId,
-            message
+            message,
+            status:"sent"
         })
 
         if(newMessage){
@@ -58,7 +59,6 @@ export const getConversations = async(req, res) => {
         const {chatUser} = req.query
         const receiverId = chatUser
         const senderId = req.user._id
-        console.log("/n his is teh data /n", senderId, receiverId)
         if(!senderId || !receiverId){
             return res.status(404).json({error:"pls make sure receiverId isn't null"})
         }
@@ -74,11 +74,67 @@ export const getConversations = async(req, res) => {
             await conversation.save()
         }
 
-        console.log("this is the conversation two", conversation)
-
         res.status(200).json({conversation})
 
     }catch(error){
         return console.log("error in getConversation", error)
+    }
+}
+
+export const receivedMessage = async (req, res) => {
+    console.log("hey michee you're on track")
+    try{
+        const {id} = req.query
+        const message = await Message.findOne({_id:id})
+        if(message){
+            message.status = "received"
+            await message.save()
+            console.log("this is the message to update status", message)
+
+            const receiverSocketId = returnReceiverSocketId(message?.receiverId);
+
+            if(receiverSocketId){
+                console.log("ia amsending this message : ", message)
+                io.to(receiverSocketId).emit("messageReceived", message)
+            }
+
+            res.status(200).json({message})
+
+        }
+
+    }catch(error){
+        console.log("this is the error in receiveMessage middleware", error)
+    }
+}
+
+export const readMessage = async (req, res) => {
+    console.log("YOUARE CURRENTLY READING EVERY SINGLE MESSAGE OF A CHANNEL.....")
+    try{
+        const {id} = req.query
+        const userId = req.user._id
+        if(!id || !userId){
+            return res.json(401).json({error:"pls id cannot be undefined"})
+        }
+
+        const messages = await Message.find({receiverId:id, senderId:userId, status:{$in:["sent", "received"]}})
+        console.log("this are the messages that status are to be updated", messages)
+
+        if(messages){
+            for(let i=0; i<=messages.length-1; i++){
+                messages[i].status = "read"
+                await messages[i].save()
+            }
+        }
+
+        console.log("this is the updated conversation", messages)
+        const receiverSocketId = returnReceiverSocketId(id)
+
+        if(receiverSocketId){
+            io.to(receiverSocketId).emit("readChat", messages)
+            res.status(200).json({ok:true})
+        }
+
+    }catch(error){
+        console.log("this is the error in receiveMessage middleware", error)
     }
 }

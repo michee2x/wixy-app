@@ -24,7 +24,10 @@ const VerifyUser = () => {
     const verify = async () => {
         setLoading(true)
         try{
-            const res = await fetch(`http://localhost:7000/api/auth/verify?token=${token}`)
+            const res = await fetch(`http://localhost:7000/api/auth/verify?token=${token}`,{
+                method:"GET",
+                credentials:"include"
+            })
             if(!res.ok){
                 const data = await res.json()
                 setLoading(false)
@@ -46,7 +49,7 @@ const VerifyUser = () => {
         return <Navigate to={"/auth"} />
     }
   return (
-    <div className='w-full h-screen dark:bg-gray-900 flex items-center justify-center'>
+    <div className='w-full h-screen dark:bg-gray-950 flex items-center justify-center'>
 
         <button onClick={verify} className='w-40 h-12 text-gray-200 rounded-xl  flex items-center justify-center bg-blue-700 '>{loading && !verified ? "verifying" : loading && verify ? "verified..." : "verify"}</button>
       

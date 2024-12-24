@@ -86,7 +86,7 @@ _id:"675ade3dffa65c72be67ac7c"
 
   return (
     <>
-    <div className={`w-full flex flex-col gap-4 lg:gap-6 pt-24 min-h-screen md:px-16 dark:bg-gray-900 bg-gray-100`}>
+    <div className={`w-full flex flex-col gap-4 lg:gap-6 py-24 min-h-screen lg:mx-auto md:px-16 lg:w-[65rem] dark:bg-gray-950 bg-gray-100`}>
     {dbUsers && dbUsers?.map((e, index) => {
                 return (
                     <Link to={`/chat/${e._id}`} key={index} className='w-full h-16 gap-3 flex cursor-pointer justify-between p-4'>
