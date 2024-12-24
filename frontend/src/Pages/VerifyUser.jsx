@@ -24,7 +24,7 @@ const VerifyUser = () => {
     const verify = async () => {
         setLoading(true)
         try{
-            const res = await fetch(`http://localhost:7000/api/auth/verify?token=${token}`,{
+            const res = await fetch(`https://wixy-app.onrender.com/api/auth/verify?token=${token}`,{
                 method:"GET",
                 credentials:"include"
             })
