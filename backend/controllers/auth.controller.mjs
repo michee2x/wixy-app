@@ -51,11 +51,11 @@ const {name, username, email, password, profilePic} = req.body
 
     const existingUser = await User.findOne({username})
     if(existingUser){
-        return res.status(400).json({error:{type:"existingUser"}})
+        return res.status(400).json({error:"username already exists. try a different one"})
     }
     const existingEmail = await User.findOne({email})
     if(existingEmail){
-        return res.status(400).json({error:{type:"existingEmail"}})
+        return res.status(400).json({error:"an account with that email already exists"})
     }
     /* const existingPassword = await User.findOne({password})
     if(existingUser){
@@ -80,9 +80,8 @@ const {name, username, email, password, profilePic} = req.body
          generateToken(newUser._id, res)
         
         const token = jwt.sign({user:newUser._id}, "jwtSecret", {expiresIn:"2h"})
-        const templateToSend = returnVerifyTemplate(newUser.name, `https://wixy-app.onrender.com/verifytoken?token=${token}`)
 
-        await sendMail(newUser,"SignUp to Wixy Marketplace", `https://wixy-app.onrender.com/verifytoken?token=${token}`)
+        await sendMail(newUser,"SignUp to Wixy Marketplace", `https://wixy-app.onrender.com/auth/verifytoken?token=${token}`, "signing up")
 
         res.status(200).json({loggedUser:{
             _id:newUser._id,
@@ -112,7 +111,7 @@ export const login = async (req, res) => {
 
     console.log("this is the user", username, password)
     const user = await User.findOne({username}).populate("followers")
-    if(!user) return res.status(404).json({error:{type:"Invalid credentials...pls signup"}})
+    if(!user) return res.status(404).json({error:"Invalid credentials...pls signup"})
 
     console.log("hey we finally got the suer", user)
 
@@ -121,12 +120,12 @@ export const login = async (req, res) => {
 
 
     if(!wrongPasword){
-        return res.status(401).json({error:{type:"Invalid credentials...pls signup"}})
+        return res.status(401).json({error:"Invalid credentials...pls signup"})
 }
   if(!user.isVerified){
     const token = jwt.sign({user:user._id}, "jwtSecret", {expiresIn:"60s"})
-
-    return res.status(401).json({message:"you are not verified yet", link:`http://localhost:5173/verifytoken?token=${token}`})
+    await sendMail(user,"User not verified", `https://wixy-app.onrender.com/auth/verifytoken?token=${token}`, "logging back")
+    return res.status(401).json({error:"token expired"})
   }
    generateToken(user._id, res)
     res.json({loggedUser:user})

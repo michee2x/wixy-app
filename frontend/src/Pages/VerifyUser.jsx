@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react'
-import {Navigate, useLocation} from "react-router-dom"
+import {Link, Navigate, useLocation} from "react-router-dom"
 import { ContextAPI } from '../ContextApi'
 
 const VerifyUser = () => {
@@ -7,7 +7,8 @@ const VerifyUser = () => {
     const query = new URLSearchParams(location.search)
     const token = query.get("token")
     const {darkmode, setDarkMode} = ContextAPI()
-    const [loading, setLoading] = useState(false)
+    const [error, setError] = useState("")
+    const [loading, setLoading] = useState(true)
     const [verified, setVerified] = useState(false)
     const [navigate, setNavigate] = useState(false)
 
@@ -21,7 +22,8 @@ const VerifyUser = () => {
         }
     }, [darkmode])
 
-    const verify = async () => {
+    useEffect(() => {
+        const verify = async () => {
         setLoading(true)
         try{
             const res = await fetch(`http://localhost:7000/api/auth/verify?token=${token}`,{
@@ -29,7 +31,8 @@ const VerifyUser = () => {
                 credentials:"include"
             })
             if(!res.ok){
-                const data = await res.json()
+                const {error} = await res.json()
+                setLoading(error)
                 setLoading(false)
                 throw new Error(data.message)
             }
@@ -45,15 +48,27 @@ const VerifyUser = () => {
         }
     }
 
+    verify()
+    }, [])
+
     if(navigate){
         return <Navigate to={"/auth"} />
     }
   return (
-    <div className='w-full h-screen dark:bg-gray-950 flex items-center justify-center'>
+    <>
+    {loading && <div className='w-full h-screen gap-10 flex-col text-blue-600 dark:bg-gray-950 flex items-center justify-center'>
+                    <span className="loading loading-dots loading-lg"></span>
+                    <span className='text-blue-300 text-[17px]'>verifying account. hold a sec...</span>
+                </div>
+    }
 
-        <button onClick={verify} className='w-40 h-12 text-gray-200 rounded-xl  flex items-center justify-center bg-blue-700 '>{loading && !verified ? "verifying" : loading && verify ? "verified..." : "verify"}</button>
-      
-    </div>
+    {!loading && <div className='w-full h-screen gap-10 flex-col text-blue-600 dark:bg-gray-950 flex items-center justify-center'>
+                    <span className='text-blue-300 text-[17px]'>Something went wrong.. its like your token expired</span>
+                    <Link to={"/auth"} className='w-32 h-12 flex items-center justify-center text-[17px] bg-blue-700 rounded-xl text-blue-100'>relogin</Link>
+                </div>
+    }
+    
+    </>
   )
 }
 

@@ -42,7 +42,7 @@ const imageUpload = multer({storage:imageStorage})
 
 app.use(cookieParser())
 app.use(express.urlencoded({extended:true}))
-app.use(cors({credentials:true, origin:"https://wixy-app.onrender.com", methods:["POST", "GET"]}))
+app.use(cors({credentials:true, origin:["https://wixy-app.onrender.com", "http://localhost:5173"], methods:["POST", "GET"]}))
 //app.use("/api/post/createpost",protectedRoute, imageUpload.single("file"), createPost)
 app.use(express.json())
 

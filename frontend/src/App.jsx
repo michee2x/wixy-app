@@ -41,6 +41,7 @@ function App() {
           <Route path='/bookmark' element={<BookmarkPage />} />
           <Route path='/following' element={<FollowingPage />} />
           <Route path='/groups' element={<GroupsPage />} />
+          <Route path='/sentatoken' element={<SentAToken />} />
 
       </Route>
 

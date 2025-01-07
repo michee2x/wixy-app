@@ -9,7 +9,7 @@ export const server = http.createServer(app)
 
 export const io = new Server(server, {
     cors:{
-        origin:"https://wixy-app.onrender.com",
+        origin:["https://wixy-app.onrender.com", "http://localhost:5173"],
         methods:["POST", "GET"],
         credentials:true
     }

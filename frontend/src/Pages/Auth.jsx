@@ -4,14 +4,17 @@ import { ContextAPI } from "../ContextApi";
 import { InputComponent } from "../Components/Input";
 import { Navigate } from "react-router-dom";
 import toast from "react-hot-toast"
+import { DataNotFound } from "../Components/Animations/DataNotFound";
 
 export const AuthPage = () => {
+  const [notVerified, setNotVerified] = useState(false)
   const [login, setLogin] = useState(true)
   const [data, setData] = useState(
     {name:"", username:"",email:"", password:""} 
   )
   const [navigate, setNavigate] = useState(false)
 
+  const [loading, setLoading] = useState(false)
   const {loggedUser, setLoggedUser} = ContextAPI()
 
 
@@ -19,6 +22,7 @@ export const AuthPage = () => {
     const AuthFunc = async (e) => {
       e.preventDefault()
       try{
+        setLoading(true)
          const res = await fetch(`http://localhost:7000/api/auth/${login ? "login" : "signup"}`, {
           method:"POST",
           headers:{"Content-Type":"application/json"},
@@ -30,7 +34,11 @@ export const AuthPage = () => {
 
         if(!res.ok){
           const {error} = await res.json()
-          toast.error(error?.type)
+          toast.error(error)
+          setLoading(false)
+          if(error === "token expired"){
+            setNotVerified(true)
+          }
         } else {
           const logged_user = await res.json()
           if(Object.keys(logged_user?.loggedUser).length){
@@ -40,6 +48,7 @@ export const AuthPage = () => {
             console.log("this is the localStorage", loggedUser)
             setLoggedUser(logged_user?.loggedUser)
             setNavigate(true)
+            setLoading(false)
           }
         }
 
@@ -52,12 +61,22 @@ export const AuthPage = () => {
       return <Navigate to={"/dashboard/id"} />
     }
 
-    else if(navigate && !login){
+    else if((navigate && !login) || notVerified){
       return <Navigate to={"/sentatoken"} />
     }
 
     return (
         <>
+      { loading ? 
+      
+      
+      <div className="bg-white h-screen w-screen flex flex-col items-center justify-center dark:bg-gray-950 py-6 sm:py-8 lg:py-12">
+        <span className="loading loading-spinner text-blue-500 text-3xl"></span>
+        <span className="text-gray-600">checking your credentials...</span>
+      </div> 
+      
+      : 
+
         <div className="bg-white h-screen w-screen dark:bg-gray-950 py-6 sm:py-8 lg:py-12">
   <div className="mx-auto dark:bg-gray-950 max-w-screen-2xl px-4 md:px-8">
     <h2 className="mb-4 text-center text-2xl dark:text-gray-100 font-bold text-gray-950 md:mb-8 lg:text-3xl">{login ? "Login" : "SignUp"}</h2>
@@ -113,7 +132,7 @@ export const AuthPage = () => {
       </div>
     </form>
   </div>
-</div>
+        </div>}
         </>
     )
 }
