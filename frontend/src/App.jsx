@@ -1,21 +1,23 @@
 import { useState } from 'react'
 import './App.css'
-import { Hero } from './Components/Hero'
-import { Footer } from './Components/Footer'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import Layout from './Layout'
-import {Home, CartPage, AuthPage, ProductPage, ChannelsPage, ChatPage, _404Page, ProfilePage, SettingsPage, DashBoardPage, MarketPlace, AboutProduct, Notifications, SentAToken} from "./Pages/index"
+import {Home, CartPage, AuthPage, ProductPage, ChannelsPage, _404Page, ProfilePage, SettingsPage, DashBoardPage, MarketPlace, AboutProduct, Notifications, SentAToken, OtherChannels, YourNetworkPage, InvitationPage, ManagePage, ConnectionsPage, NewsletterPage, BookmarkPage, FollowingPage, GroupsPage, ChatPage} from "./Pages/index"
 import Contact from './Pages/Contact'
 import About from './Pages/About'
 import VerifyUser from './Pages/VerifyUser'
+import { AuthLayout } from './AuthLayout'
+import { Toaster } from 'react-hot-toast'
+
 
 function App() {
-  const [count, setCount] = useState(0)
 
   return (
     
     <>
     <BrowserRouter>
+    <div>
+       <Toaster position='top-center'/>
     <Routes>
       <Route path='/' element={<Layout />}>
           <Route index element={<Home />} />
@@ -31,19 +33,28 @@ function App() {
           <Route path='/marketplace' element={<MarketPlace />} />
           <Route path='/aboutproduct/:id' element={<AboutProduct />} />
           <Route path='/notifications' element={<Notifications />} />
+          <Route path='/network' element={<YourNetworkPage />} />
+          <Route path='/invitation' element={<InvitationPage />} />
+          <Route path='/manage' element={<ManagePage />} />
+          <Route path='/connections' element={<ConnectionsPage />} />
+          <Route path='/newsletter' element={<NewsletterPage />} />
+          <Route path='/bookmark' element={<BookmarkPage />} />
+          <Route path='/following' element={<FollowingPage />} />
+          <Route path='/groups' element={<GroupsPage />} />
 
       </Route>
 
-      <Route path='/auth' element={<AuthPage />} />
-      <Route path='/*' element={<_404Page />} />
-      <Route path='/verifytoken' element={<VerifyUser />} />
-      <Route path='/sentatoken' element={<SentAToken />} />
+      <Route path='/auth' element={<AuthLayout />}>
+          <Route index element={<AuthPage />} />
+          <Route path='/auth/verifytoken' element={<VerifyUser />} />
+          <Route path='/auth/sentatoken' element={<SentAToken />} />
+      </Route>
+
+          <Route path='/*' element={<_404Page />} />
 
     </Routes>
-    
+    </div>
     </BrowserRouter>
-    
-      
     </>
   )
 }

@@ -74,7 +74,7 @@ const {name, username, email, password, profilePic} = req.body
         profilePic
     })
 
-    newUser.save()
+    await newUser.save()
      
     if(newUser) {
          generateToken(newUser._id, res)
@@ -112,7 +112,7 @@ export const login = async (req, res) => {
 
     console.log("this is the user", username, password)
     const user = await User.findOne({username}).populate("followers")
-    if(!user) return res.status(404).json({error:{type:"nameError"}})
+    if(!user) return res.status(404).json({error:{type:"Invalid credentials...pls signup"}})
 
     console.log("hey we finally got the suer", user)
 
@@ -121,7 +121,7 @@ export const login = async (req, res) => {
 
 
     if(!wrongPasword){
-        return res.status(401).json({error:{type:"password"}})
+        return res.status(401).json({error:{type:"Invalid credentials...pls signup"}})
 }
   if(!user.isVerified){
     const token = jwt.sign({user:user._id}, "jwtSecret", {expiresIn:"60s"})

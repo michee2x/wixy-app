@@ -2,98 +2,132 @@ import React, {useEffect, useState, useRef} from 'react'
 import { ContextAPI } from '../ContextApi'
 import {useListenMessages} from "../Hooks/useListenMessages"
 import { useSocketContext } from '../SocketContext'
+import { ChatPage } from './ChatPage'
+import { BreadCrumb } from '../Components/BreadCrumb'
+import {returnUnreadMessages} from "../Utils/returnUnreadMessages"
+import useFetchConversations from '../Hooks/useFetchConversations'
+import {AddOrUpdate} from "../Utils/AddOrUpdate"
+import {IoCheckmarkDone} from "react-icons/io5"
+import {IoMdCheckmark} from "react-icons/io"
+import {createdAt} from "../Utils/createdAt"
 import { Link } from 'react-router-dom'
 
-const MessageChatCom = ({status, data}) => {
-    useListenMessages()
-    return (
-        <>
-        {status === "right" && <div id="leftMsg" className="flex justify-start flex-row-reverse items-center mt-8">
-                <img src="https://github.com/mojombo.png?size=56" className="h-12 w-12  border-[1px] border-zinc-300 border-opacity-50 rounded-full mr-3 opacity-90" alt="User avatar"/>
-                <div className="w-[400px] min-h-[56px] bg-[#030303] border border-1 border-zinc-300 border-opacity-30 rounded-md flex items-start px-2 py-2 text-zinc-300 relative">
-                {data?.message}
-                <div className="absolute -bottom-6 left-0 text-zinc-600 text-sm">
-                    Sent at {data?.createdAt}
-                </div>
-                </div>
-            </div>
-}
-
-           {status === "left" && <div id="leftMsg" className="flex justify-start items-center mt-8">
-                <img src="https://github.com/mojombo.png?size=56" className="h-12 w-12  border-[1px] border-zinc-300 border-opacity-50 rounded-full mr-3 opacity-90" alt="User avatar"/>
-                <div className="w-[400px] min-h-[56px] bg-[#030303] border border-1 border-zinc-300 border-opacity-30 rounded-md flex items-start px-2 py-2 text-zinc-300 relative">
-                {data?.message}
-                <div className="absolute -bottom-6 left-0 text-zinc-600 text-sm">
-                    Sent at {data?.createdAt}
-                </div>
-                </div>
-            </div>
-}
-        </>
-
-    )
-}
-
 export const ChannelsPage = () => {
-    const {messages, setMessages, dbUsers} = useSocketContext()
+    useListenMessages()
+    const {messages, setMessages, dbUsers, socket, loading, conversationRepo, setConversationRepo} = useSocketContext()
     const [text, setText] = useState("")
-    const {selectedChat, loggedUser, setSelectedChat} = ContextAPI()
+    const {selectedChat, loggedUser, allConversations, setAllConversations, setSelectedChat, lastChat, setLastChat} = ContextAPI()
     const receiverId = selectedChat?._id
-
+    const [load, setLoad] = useState(0)
+    const  intervalRef = useRef(null)
 
     useEffect(() => {
-        const fetchMessages = async () => {
-            console.log("thisis the receiverID oooo: ", receiverId)
-            try{
-                const res = await fetch(`http://localhost:7000/api/message/getconversation?chatUser=${receiverId}`, {
-                    method:"GET",
-                    credentials:"include"
-                })
-                if(!res.ok) throw new Error(res)
-
-                const data = await res.json()
-
-                console.log("thisis the conversation messages hahaha", data?.conversation?.messages)
-                setMessages(data?.conversation?.messages)
-
-            } catch(error){
-                console.log(error)
+            const setFirst = () => {
+                        //Remove the channel from its current position
+                        const newConversation = allConversations?.filter(obj => obj._id !== lastChat)
+                        //Insert the channel at the front of the array
+                        newConversation?.unshift(lastChat)
+                        setAllConversations(newConversation)
+                }
+          const fetchEveryConversation = async () => {
+               try{
+                          const res = await fetch(`http://localhost:7000/api/message/geteveryconversation`, {
+                          method:"GET",
+                          credentials:"include"
+                          })
+                          if(!res.ok) throw new Error(res)
+      
+                          const data = await res.json()
+                          console.log("BRO THHIS ARE ALL YOUR CONVERSATIIONS---------------------------- ", data?.allConversations)
+                          setAllConversations(data?.allConversations)
+                          //setFirst()
+                  } catch(error){
+                      console.log(error)
+                  }
+              }
+  
+        fetchEveryConversation()
+}, [])
+    
+    useEffect(() => {
+       intervalRef.current = setInterval(() => {
+            if(load < 100){
+                setLoad(prev => prev + 0.001)
+            } else {
+                if(intervalRef.current){
+                    clearInterval(intervalRef.current)
+                }
             }
+    }, 30)
+
+    /* return () => {
+        if(intervalRef.current){
+                    clearInterval(intervalRef.current)
         }
-
-    }, [selectedChat, messages])
-
-
-
-
-   /*  {       
-bio:"",
-bookmark:[],
-createdAt:"2024-12-12T12:59:42.407Z",
-email:"m@m",
-followers:[],
-following:[],
-isVerified:false,
-link:"",
-name:"michee",
-password:"$2a$10$PrvyklMLTIjBN9ZngQjriOI1K9ihKeO/eO4R6CJVqLXlIzFwcYjfK",
-profilepic:"",
-updatedAt:"2024-12-12T12:59:42.407Z,
-username:"michee2x",
-__v:0,
-_id:"675ade3dffa65c72be67ac7c"
     } */
+    }, [load])
+
+
+const storeAllConversationAsRead = async (_id) => {
+    try{
+            const res = await fetch(`http://localhost:7000/api/message/readmessages?id=${_id}`, {
+                method:"GET",
+                credentials:"include"
+            })
+            if(!res.ok){
+                throw new Error(res)
+            }
+
+            const {unReadMessages} = await res.json()
+            console.log("this are the read datas", unReadMessages)
+            if(allConversations.length > 0){
+                for(let i=0; i<=unReadMessages.length-1;i++){
+                        const newConversations = allConversations.map(e => e.participants[e?.participants[0]?._id === loggedUser?._id ? 1 : 0]?._id === unReadMessages[i]?.senderId ? {...e, messages:AddOrUpdate(e.messages, unReadMessages[i])} : e)
+                        setAllConversations(newConversations);
+                    }
+                    
+            }
+    }catch(error){
+        console.log("there was an error in storeAllConversationAsRead func", error)
+    }
+}
+
+const StatusTypeIcon = (status) => {
+        if(status === "sent"){
+            return <span className="text-gray-400 text-xl"><IoMdCheckmark /></span>
+        }
+        else if(status === "received"){
+                return <span className="text-gray-400 text-xl"><IoCheckmarkDone /></span>
+        } else if(status === "read"){
+                return <span className="text-blue-400 text-xl"><IoCheckmarkDone /></span>
+        }
+        else{
+            return ""
+        }
+}
 
   return (
     <>
-    <div className={`w-full flex flex-col gap-4 lg:gap-6 py-24 min-h-screen lg:mx-auto md:px-16 lg:w-[65rem] dark:bg-gray-950 bg-gray-100`}>
-    {dbUsers && dbUsers?.map((e, index) => {
+    <div className={`w-full ${allConversations.length < 1 ? "block" : "hidden"} flex-col flex items-center justify-center gap-4 lg:gap-6 py-24 min-h-screen lg:mx-auto md:px-16 lg:w-[65rem] dark:bg-gray-950 bg-gray-100`}>
+       <progress className="progress bg-gray-900 progress-primary w-56" value={`${load}`} max="100"></progress>
+       <p className='text-center tracking-widest text-blue-400'>Loading your chats...</p>
+       <p className='text-center tracking-widest text-blue-400'>{Math.floor(load) < 100 ? Math.floor(load) : "100"}%</p>
+    </div>
+    <div className={`w-full px-4 flex flex-col gap-4 lg:gap-6 py-24 min-h-screen lg:mx-auto md:px-16 lg:w-[65rem] dark:bg-gray-950 bg-gray-100`}>
+    <BreadCrumb history={[{name:"My Network", link:"/network", current:false}, {name:"My Channels", current:true, link:`/channels`}]} />
+    {allConversations?.length > 0 && allConversations?.map((e, index) => {
                 return (
-                    <Link to={`/chat/${e._id}`} key={index} className='w-full h-16 gap-3 flex cursor-pointer justify-between p-4'>
+                    <Link to={`/chat/${e._id}`} onClick={() => {setSelectedChat(e); setLastChat(e?._id); storeAllConversationAsRead(e?.participants[e?.participants[0]?._id === loggedUser?._id ? 1 : 0]?._id)}} key={index} className='w-full h-16 gap-3 flex cursor-pointer justify-between py-4'>
                         <img src="src\assets\ai-generated-8249225_1280.jpg" alt="" className='w-12 rounded-full md:w-16 md:h-16 h-12 object-cover'/>
                         <span className='flex w-[90%] flex-col gap-1'>
-                            <span className='flex justify-between w-full h-auto'><b className='font-semibold text-md font-sans tracking-wider text-gray-200'>{e?.name}</b> <i className='text-gray-500 text-xs'>4:33 AM</i></span>
-                            <span className='text-gray-500 font-bold'>what's up bro</span>
+                            <span className='flex justify-between w-full h-auto'><b className='font-semibold text-md font-sans tracking-wider text-gray-200'>{Object.keys(e).length && e?.participants[e?.participants[0]?._id === loggedUser?._id ? 1 : 0]?.name}</b> <i className='text-gray-500 text-xs'>{e?.messages?.length && `${createdAt(e?.messages[e?.messages?.length - 1]?.createdAt)}` !== "undefined" ? `${createdAt(e?.messages[e?.messages?.length - 1]?.createdAt)}` : "just now"}</i></span>
+                            <span className='flex justify-between w-full h-auto'>
+                                <b className='font-semibold flex gap-1 items-center text-md font-sans tracking-wider text-gray-200'>
+                                    <i>{Object.keys(e).length && e?.messages[e?.messages?.length - 1]?.senderId === loggedUser?._id ? StatusTypeIcon(e?.messages[e?.messages?.length - 1]?.status) : ""}</i>
+                                    <b>{Object.keys(e).length && e?.messages[e?.messages?.length - 1]?.message}</b>
+                                </b>
+                                <i className={`text-blue-200 w-6 flex justify-center items-center ${returnUnreadMessages(e?.messages) > 0 ? "block" : "hidden"} h-6 rounded-full bg-blue-800 text-xs`}>{returnUnreadMessages(e?.messages)}</i></span>
+                            
                         </span>
                     </Link>
                 )

@@ -23,7 +23,23 @@ const userSchema = mongoose.Schema({
         type:String,
         default:""
     },
-    bio:{
+    profilecover:{
+        type:String,
+        default:""
+    },
+    website:{
+        type:String,
+        default:""
+    },
+    address:{
+        type:String,
+        default:""
+    },
+    number:{
+        type:String,
+        default:""
+    },
+    desc:{
         type:String,
         default:""
     },
@@ -55,7 +71,21 @@ const userSchema = mongoose.Schema({
     isVerified:{
         type:Boolean,
         default:false
-    }
+    },
+    unacceptedConnectRequests:[
+        {
+            type:mongoose.Schema.Types.ObjectId,
+            ref:"User",
+            default:[]
+        }
+    ],
+    sentConnectionRequest:[
+        {
+            type:mongoose.Schema.Types.ObjectId,
+            ref:"User",
+            default:[]
+        }
+    ]
 }, {timestamps:true})
 
 const  User = mongoose.model("User", userSchema)

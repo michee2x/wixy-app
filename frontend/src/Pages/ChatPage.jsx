@@ -8,6 +8,8 @@ import {MdChatBubble} from "react-icons/md"
 import {IoCheckmarkDone} from "react-icons/io5"
 import {IoMdCheckmark} from "react-icons/io"
 import { useReadMessage } from '../Hooks/useReadMessage'
+import { useReadAllMessages } from '../Hooks/useReadAllMessages'
+import { AddOrUpdate } from '../Utils/AddOrUpdate'
 
 const MessageChatCom = ({status, data}) => {
 
@@ -43,52 +45,40 @@ const MessageChatCom = ({status, data}) => {
 }
 
 export const ChatPage = () => {
+    useReadAllMessages()
     useReadMessage()
     useListenMessages()
-    const [laoding, setLoading] = useState(false)
     const {id} = useParams()
-    const [inputText, setInputText] = useState("")
-    const [text, setText] = useState("")
-    const {messages, setMessages, dbUsers, socket} = useSocketContext()
-    const {selectedChat, loggedUser, setSelectedChat} = ContextAPI()
+    const [inputText, setInputText] = useState({placeholder:"", mainholder:""})
+    const {messages, setMessages, dbUsers, socket, typing, setTyping} = useSocketContext()
+    const {selectedChat, loggedUser, setSelectedChat, allConversations, setAllConversations,} = ContextAPI()
     const lastChatMessageRef = useRef(null)
+    const chatDivRef = useRef(null)
 
-    useEffect(() => {
+    /* const fetchMessages = async () => {
+        console.log("ITS TIME TO FETCH CONVERSSATION >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
+            try{
+                    const res = await fetch(`http://localhost:7000/api/message/getconversation?chatUser=${id}`, {
+                    method:"GET",
+                    credentials:"include"
+                    })
+                    if(!res.ok) throw new Error(res)
 
-        const addOrUpdate = (array, newObject) => {
-            //find the index of the object with thesame id
-            const index = array.findIndex(obj => obj._id === newObject._id)
+                    const data = await res.json()
 
-            if(index > -1){
-                //if found, merge the existing object with the new one
-                array[index] = {...array[index], ...newObject};
-            } else {
-                //if not found, add the new object to the array
-                array.push(newObject)
+                    console.log("thisis the conversation messages", data?.conversation?.messages)
+                    //AddOrUpdate(messages, data?.conversation?.messages, setMessages)
+                    setMessages(data?.conversation?.messages)
+                    
+                    socket?.emit("seenchannelmessage", messages)
+
+            } catch(error){
+                console.log(error)
+            }finally{
+                setInputText("")
             }
+        } */
 
-            setMessages(array)
-        }
-        socket?.on("receivedMessage", (data) => {
-            const {unReadConversation, selected} = data;
-            if(selectedChat._id === selected){
-                for(let i=0; i<=unReadConversation.length-1; i++){
-                    const message = unReadConversation[i]
-                    addOrUpdate(messages, message)
-                }
-            }
-        })
-        
-        socket?.on("readChat", data => {
-            console.log("HEY ALL THE MESSAGES ARE READ", data)
-            setMessages([...messages, ...data])
-        })
-
-        return () => {
-            socket?.off("receivedMessage")
-            socket?.off("readChat")
-        }
-    }, [messages, socket, selectedChat])
 
     useEffect(() => {
             setTimeout(() => {
@@ -97,16 +87,17 @@ export const ChatPage = () => {
                 block:'end'
             })
         }
-            }, 500)
-    }, [messages])
+            }, 50)
+    }, [Object.keys(selectedChat).length, allConversations])
 
     const sendMessage = async (e) => {
-        console.log("the send Message function isworking....", text, id)
+        console.log("the send Message function isworking....")
+        const text = inputText.mainholder
         e.preventDefault()
-        if(id){
+        if(Object.keys(selectedChat).length > 0){
             try{
-             
-             const res = await fetch(`http://localhost:7000/api/message/sendmessage?receiverId=${id}`, {
+            
+             const res = await fetch(`http://localhost:7000/api/message/sendmessage?receiverId=${selectedChat?.participants[selectedChat?.participants[0]?._id === loggedUser?._id ? 1 : 0]?._id}`, {
                 method:"POST",
                 headers:{"Content-Type" : "application/json"},
                 body:JSON.stringify({
@@ -119,10 +110,13 @@ export const ChatPage = () => {
                 throw new Error (res)
             }
 
-            const data = await res.json()
-            setMessages([...messages, data])
-            //scrollToLastMessage()
-            console.log("this is the data from sendMesageFunc", data)
+            const newMessage = await res.json()
+            console.log("Da Da Da : ", newMessage)
+            if(Object.keys(newMessage).length > 0){
+                const newConversations = allConversations.map(e => e.participants[e?.participants[0]?._id === loggedUser?._id ? 1 : 0]?._id === newMessage?.receiverId ? {...e, messages:AddOrUpdate(e.messages, newMessage)} : e)
+                console.log("this is the newConversation", newConversations)
+                setAllConversations(newConversations)
+            }
             
 
             
@@ -133,39 +127,6 @@ export const ChatPage = () => {
         }
     }
 
-    useEffect(() => {
-        const particularUser = dbUsers?.find(e => e._id === id)
-
-        if(particularUser){
-            setSelectedChat(particularUser)
-        }
-console.log("thsi is rh conversaton for paruser", messages)
-
-        const fetchMessages = async () => {
-            console.log("thisis the receiverID oooo: ", id)
-            try{
-                const res = await fetch(`http://localhost:7000/api/message/getconversation?chatUser=${id}`, {
-                    method:"GET",
-                    credentials:"include"
-                })
-                if(!res.ok) throw new Error(res)
-
-                const data = await res.json()
-
-                console.log("thisis the conversation messages", data?.conversation?.messages)
-                setMessages(data?.conversation?.messages)
-
-            } catch(error){
-                console.log(error)
-            }finally{
-                setInputText("")
-            }
-        }
-
-        fetchMessages()
-
-    }, [])
-
 
     const fromMe = (e) => {
         const status = e?.senderId === loggedUser?._id
@@ -173,25 +134,19 @@ console.log("thsi is rh conversaton for paruser", messages)
 
     }
 
-    if(!selectedChat){
-        setTimeout(() => {
-            return <Navigate to="/channels" />
-        }, 10)
-    }
-
   return (
     <>
-    <div className='w-full pt-16 min-h-screen dark:bg-gray-950'>
+    <div key={selectedChat?._id} className='w-full pt-16 min-h-screen dark:bg-gray-950'>
       <form onSubmit={sendMessage} className={`w-full h-full ${Object.keys(selectedChat).length !== 0 ? "block" : "hidden"} flex justify-center`}>
   
     
-    <div className="relative w-full h-full my-12 pb-10 rounded-md overflow-hidden p-5">
-        <div className="flex flex-col lg:mx-auto lg:w-[65rem] h-auto w-full">
-                {messages?.length  ? messages?.map(e => {
+    <div className="relative w-full h-full my-12 lg:pr-32 pb-10 rounded-md overflow-hidden p-5">
+        <div ref={chatDivRef} className="flex flex-col  h-auto w-full">
+                {selectedChat?.messages?.length  ? selectedChat?.messages?.map(e => {
                     return <MessageChatCom status={fromMe(e) ? "right" : "left"} data={e} />
                 }) : (
                 <p className='w-full h-auto flex flex-col justify-center items-center text-center text-xl text-yellow-400...'> 
-                        <span className='text-accent text-[20rem]'><MdChatBubble /></span> <span className='text-accent'>{`start a conversation with ${selectedChat?.name}`}</span>
+                        <span className='text-primary text-[20rem]'><MdChatBubble /></span> <span className='text-blue-400'>{`start a conversation with ${Object.keys(selectedChat).length > 0 && selectedChat?.participants[1]?.name}`}</span>
                 </p>)}
                 <div ref={lastChatMessageRef} className='h-24 justify-between items-center px-10 border-b-[1px] border-b-primary my-10 flex w-full bg-transparent'>
                 
@@ -200,8 +155,8 @@ console.log("thsi is rh conversaton for paruser", messages)
 
          </div>
         <div className='w-[90%] lg:w-1/2 flex rounded-xl overflow-hidden left-1/2 transform -translate-x-1/2 z-20 border-[1px] fixed focus:border-accent dark:focus:border-accent focus:ring-accent focus:ring-opacity-40 focus:outline-none focus:ring bottom-5 h-10 bg-gray-900'>
-            <textarea value={inputText} onChange={(e) => {setInputText(e.target.value); setText(e.target.value)}} type="text" className="w-[85%] overflow-hidden resize-none lg:w-[93%] pt-1.5 pb-2 pl-4 pr-2 h-full text-gray-700 bg-white border-0 outline-0 rounded-md dark:bg-gray-900 dark:text-gray-300" placeholder="send a message..." />
-            <button onClick={() => setInputText("")} className='text-blue-600 right-5 top-1/2 cursor-pointer transform -translate-y-1/2 absolute text-2xl' type='submit'><IoIosSend /></button>
+            <textarea value={inputText.placeholder} onChange={(e) => setInputText({placeholder:e.target.value, mainholder:e.target.value})} type="text" className="w-[85%] overflow-hidden resize-none lg:w-[93%] pt-1.5 pb-2 pl-4 pr-2 h-full text-gray-700 bg-white border-0 outline-0 rounded-md dark:bg-gray-900 dark:text-gray-300" placeholder="send a message..." />
+            <button onClick={() => setInputText({...inputText, placeholder:""})} className='text-blue-600 right-5 top-1/2 cursor-pointer transform -translate-y-1/2 absolute text-2xl' type='submit'><IoIosSend /></button>
         </div>
     </div>
 </form>

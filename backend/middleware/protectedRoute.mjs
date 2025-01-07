@@ -3,7 +3,7 @@ import User from "../models/user.model.mjs"
 
 export const protectedRoute = async (req, res, next) => {
 try{
-    console.log("this is the cookie object", req.cookies["jwtToken"])
+    //console.log("this is the cookie object", req.cookies["jwtToken"])
     const cookies = req.cookies.jwtToken
     
     if(!cookies) {

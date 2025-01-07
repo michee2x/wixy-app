@@ -43,7 +43,7 @@ const imageUpload = multer({storage:imageStorage})
 app.use(cookieParser())
 app.use(express.urlencoded({extended:true}))
 app.use(cors({credentials:true, origin:"http://localhost:5173", methods:["POST", "GET"]}))
-app.use("/api/post/createpost",protectedRoute, imageUpload.single("file"), createPost)
+//app.use("/api/post/createpost",protectedRoute, imageUpload.single("file"), createPost)
 app.use(express.json())
 
 app.use('/api/message', messageRoute)

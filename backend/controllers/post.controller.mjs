@@ -7,57 +7,21 @@ import fs from "fs"
 
 export const createPost = async (req, res) => {
     try{
-        const text = req.body.text
-        const path = req.file.path
-        let file = req.file
-        const  user = req.user
-        if (!user) return res.status(404).json({error:"user not found err"})
+        const userId = req.user._id
+        const data = req.body
+        console.log("this is the product data to post to database", data)
+        const user = await User.findOne(userId);
+        if(!user) return res.status(401).json({error:"user not found in database."})
 
-        const foundPost = await Posts.find({user:user._id})
-
-        
-        if(file.mimetype === "video/mp4"){
-            
-         const res = await  cloudinary.v2.uploader.upload(req.file?.path, { resource_type: "video",eager: [
-      { width: 100, height: 100, crop: "pad", audio_codec: "none" }, 
-      { width: 160, height: 100, crop: "crop", gravity: "south", audio_codec: "none" } ],                                   
-    eager_async: true,
-    eager_notification_url: "https://mysite.example.com/notify_endpoint" })
-    
-            file = res.secure_url
-            console.log("thi sis the uploaded respnse for the video", res.secure_url)
-        }
-        if(file.mimetype === 'image/jpeg' || file.mimetype === 'image/png'){
-            const byteArrayBuffer = fs.readFileSync(req.file?.path);
-            const uploadResult = await new Promise((resolve) => {
-            cloudinary.v2.uploader.upload_stream({ transformation: { width: 200, height:200,crop: "fill" }},(error, uploadResult) => {
-            return resolve(uploadResult);
-            }).end(byteArrayBuffer);
-        });
-
-        file = uploadResult.secure_url
-
-        if(uploadResult.secure_url){
-            fs.unlink(path, (err) => {
-            if(err){
-                console.log("this was a problem deleting file")
-            }
-        })
-        }
-        }
-
-        const newPost  =  new Posts({
-            user:req.user._id.toString(),
-            text,
-            file:req.file === undefined ? "" : file
+        const newProduct = new Posts({
+            ...data, user:userId
         })
 
-        await  newPost.save()
-
-        res.status(200).json(newPost)
-
-
-    }catch (error){
+        if(newProduct){
+            await newProduct.save()
+            res.status(200).json({newProduct})
+        }
+    } catch (error){
         console.log("error in post controller", error)
         res. status(500).json({error:"Internal server error..."})
     }
@@ -168,17 +132,9 @@ export const likeunlikepost =  async(req, res) => {
 }
 
 export const getAllPost = async(req, res) => {
-    let {page} = req.query
-    page = parseInt(page) || 1
-    const skip = (page - 1) * 5
     try{
-        const posts = await Posts.find().skip(skip).limit(5).sort({createdAt:-1}).populate({path:"user", select:"-password"}, ).
-populate({path:"Comments.userid"})
-        if(!posts) return res.status(404).json({error:"Error Loading post..."})
-
-        if(posts === 0) return res.status(200).json({message:[]})
-
-        res.status(200).json({message: posts})
+        const posts = await Posts.find({}).populate("user").sort({createAt: -1})
+        res.status(200).json({posts})
     } catch (error) {
         console.log("error in getAll post route", error)
         res.status(500).json({error:"Internal server error"})
@@ -187,14 +143,14 @@ populate({path:"Comments.userid"})
 
 export const getUserPost = async (req, res) => {
     try{
+        console.log("it is timeeeee toget post")
         const id = req.params.id.toString()
 
-        const userPost = await Posts.find({user:id}).sort({createdAt: -1}).populate({path:"user"})
-        .populate({path:"Comments.userid"})
+        const post = await Posts.findOne({_id:id})
 
-        if(!userPost) return res.status(404).json({error:"userpost not found..."})
+        if(!post) return res.status(404).json({error:"product not found..."})
 
-        res.status(200).json(userPost)
+        res.status(200).json({post})
 
     } catch (error){
         console.log("error in getAll post route", error)

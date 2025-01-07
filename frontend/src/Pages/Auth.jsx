@@ -1,14 +1,11 @@
 import React, {useEffect, useState} from "react";
-import { ErrorAlert } from "../Components/ErrorAlert";
 import { storeFieldInLocalStorage } from "../Utils/LocalStorage";
 import { ContextAPI } from "../ContextApi";
 import { InputComponent } from "../Components/Input";
 import { Navigate } from "react-router-dom";
+import toast from "react-hot-toast"
 
 export const AuthPage = () => {
-  const [show, setShow] = useState(false)
-  const [AlertType, setAlertType] = useState("")
-  const {darkmode, setDarkMode} = ContextAPI()
   const [login, setLogin] = useState(true)
   const [data, setData] = useState(
     {name:"", username:"",email:"", password:""} 
@@ -19,21 +16,10 @@ export const AuthPage = () => {
 
 
 
-    useEffect(() => {
-        const doc = document.body
-        if(darkmode){
-            doc.classList.add("dark");
-        }else{
-            doc.classList.remove("dark")
-        }
-    }, [darkmode])
-
     const AuthFunc = async (e) => {
       e.preventDefault()
       try{
-            console.log("ths is the inpuet benene", data)
-
-        const res = await fetch(`http://localhost:7000/api/auth/${login ? "login" : "signup"}`, {
+         const res = await fetch(`http://localhost:7000/api/auth/${login ? "login" : "signup"}`, {
           method:"POST",
           headers:{"Content-Type":"application/json"},
           body:JSON.stringify({
@@ -43,24 +29,22 @@ export const AuthPage = () => {
         })
 
         if(!res.ok){
-          setShow(true)
-          setAlertType("bad")
+          const {error} = await res.json()
+          toast.error(error?.type)
         } else {
           const logged_user = await res.json()
-          if(logged_user){
+          if(Object.keys(logged_user?.loggedUser).length){
+            toast.success("Successful. Welcome to Wixy.")
             console.log("ths is the logged-user", logged_user?.loggedUser)
-          localStorage.setItem("logged-user", JSON.stringify(logged_user?.loggedUser))
-          console.log("this is the localStorage", loggedUser)
-          setLoggedUser(logged_user?.loggedUser)
-          setAlertType("good")
-          setShow(true)
+            localStorage.setItem("logged-user", JSON.stringify(logged_user?.loggedUser))
+            console.log("this is the localStorage", loggedUser)
+            setLoggedUser(logged_user?.loggedUser)
+            setNavigate(true)
           }
         }
 
       }catch(error){
         console.log(error)
-      }finally{
-        setNavigate(true)
       }
     }
 
@@ -75,7 +59,6 @@ export const AuthPage = () => {
     return (
         <>
         <div className="bg-white h-screen w-screen dark:bg-gray-950 py-6 sm:py-8 lg:py-12">
-          <ErrorAlert AlertType={AlertType} setShow={setShow} show={show}/>
   <div className="mx-auto dark:bg-gray-950 max-w-screen-2xl px-4 md:px-8">
     <h2 className="mb-4 text-center text-2xl dark:text-gray-100 font-bold text-gray-950 md:mb-8 lg:text-3xl">{login ? "Login" : "SignUp"}</h2>
 

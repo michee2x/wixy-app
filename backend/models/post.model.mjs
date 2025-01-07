@@ -6,21 +6,26 @@ const postSchema = mongoose.Schema({
         required:true,
         ref:"User"
     },
-    text:{
+    name:{
         type:String,
         default:""
     },
-    file:{
+    price:{
         type:String,
         default:""
     },
-    likes:[
-        {
-            type:mongoose.Schema.Types.ObjectId,
-            default:[],
-            ref:"User"
-        }
-    ],
+    category:{
+        type:String,
+        default:""
+    },
+    desc:{
+        type:String,
+        default:""
+    },
+    instock:{
+        type:Boolean,
+        default:false
+    },
     Comments:[
         {
             text:{
@@ -36,13 +41,14 @@ const postSchema = mongoose.Schema({
             }
         }
     ],
-    bookmark:[
-        {
-            type:mongoose.Schema.Types.ObjectId,
-            default:[],
-            ref:"User"
-        }
-    ]
+    postimg:{
+        type:String,
+        default:""
+    },
+    postvideo:{
+        type:String,
+        default:""
+    }
 }, {timestamps:true})
 
 const Posts  = mongoose.model("Post", postSchema)

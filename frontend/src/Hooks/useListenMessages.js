@@ -1,30 +1,35 @@
 import { ContextAPI } from "../ContextApi"
 import { useSocketContext } from "../SocketContext"
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 
 export const useListenMessages = () => {
     const {socket, messages, setMessages} = useSocketContext()
     const {selectedChat, loggedUser} = ContextAPI()
 
-    const sendReceivedMessage = async (id) => {
-        try{
 
-            const res = await fetch(`http://localhost:7000/api/message/receivedmessage?id=${id}`, {
+
+    useEffect(() => {
+        const storeMessageAsViewed = async (message_id) => {
+        try{
+            const res = await fetch(`http://localhost:7000/api/message/readmessage?id=${message_id}`, {
                 method:"GET",
                 credentials:"include"
             })
 
-            if(!res.ok) throw new Error(res)
+            if(!res.ok) throw new Error(res);
 
             const data = await res.json()
-            console.log("this is the data in sendReceivedMessage func", data)
-
-        }catch(error){
-            console.log("error in send received message", error)
+            const storedMessage = data?.message
+            console.log("the message is successfully stored as read", storedMessage)
+            if(storedMessage){
+                    console.log("HEY PEOPLE, THE MESSAGE IS SUCCESSFULLY STORED AS READ!!!", storedMessage)
+                addOrUpdate(messages, storedMessage);
+                //socket?.emit("MessageRead", storedMessage)
+                }
+        } catch(error){
+            console.log("error in storeMessageAsViewed func", error)
         }
     }
-
-    useEffect(() => {
         const addOrUpdate = (array, newObject) => {
             //find the index of the object with thesame id
             const index = array.findIndex(obj => obj._id === newObject._id)
@@ -39,21 +44,13 @@ export const useListenMessages = () => {
 
             setMessages(array)
         }
-            socket?.on("newMessage", (newMessage) => {
-                console.log("message from frontend", newMessage);
-                addOrUpdate(messages, newMessage);
-                sendReceivedMessage(newMessage?._id)
-                if(selectedChat){
-             socket?.emit("MessageRead", {senderId:selectedChat?._id, receiverId:loggedUser?._id})
-        }
-            })
+           /*  socket?.on("newMessage", (newMessage) => {
+                console.log("message someone sent to you", newMessage)
+                
+            }) */
 
-            socket?.on("messageReceived", (data)=>{
-            console.log("this is the received message for updating the status", data)
-            setMessages([...messages, data])
-        })
-
-            return () => socket?.off("newMessage")
-    }, [socket, setMessages, messages])
+            return () => {
+            }
+    }, [])
 }
 

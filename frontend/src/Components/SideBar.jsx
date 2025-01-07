@@ -1,37 +1,37 @@
 import React, { useEffect, useState } from "react"
 import {Footer} from "./Footer"
 import {Hero} from "./Hero"
-import {MdCancel, MdChat, MdContacts, MdDashboard, MdNotifications, MdPerson, MdPerson4, MdSettings} from 'react-icons/md'
+import {MdCancel, MdChat, MdContacts, MdDashboard, MdNotifications, MdPerson, MdPerson2, MdPerson4, MdSettings} from 'react-icons/md'
 import Nav from "./Nav"
 import { ContextAPI } from "../ContextApi"
 import { CookieComponent } from "./Cookie"
 import { Link, Navigate } from "react-router-dom"
 import {MdHome} from "react-icons/md"
-import {IoIosArrowBack, IoIosArrowForward} from "react-icons/io"
+import {IoIosGitNetwork, IoIosArrowForward} from "react-icons/io"
 import {SiCoinmarketcap} from "react-icons/si"
 import { useSocketContext } from "../SocketContext"
-import Avatar from "./Avatar"
+import {RiWechatChannelsFill, RiUserCommunityFill} from "react-icons/ri"
 
 
 export const SideBar = ({children}) => {
+    const {loggedUser, setLoggedUser, selectedChat, setSelectedChat} = ContextAPI()
     const {onlineUsers, socket, setOnlineUsers, dbUsers, setDbUsers} = useSocketContext()
     const [options, setOptions] = useState([
         [{name:"home", url:"/", icon:<MdHome />}
         , {name:"contact", url:"/contact", icon:<MdContacts />}
         , { name:"about", url:"/about", icon:<MdPerson4 />}
     ],
-        [{name:"dashboard", url:"/dashboard/id", icon:<MdDashboard />}
-        , { name:"profile", url:"/profile/id", icon:<MdPerson />}
-        , {name:"settings", url:"/settings", icon:<MdSettings />}
-        , {name:"chats", url:"/channels", icon:<MdChat />}
-        , {name:"marketplace", url:"/marketplace", icon:<SiCoinmarketcap />}
-        , {name:"notification", url:"/notifications", icon:<MdNotifications />}
+        [{name:"home", url:"/dashboard/id", icon:<MdDashboard />}
+        , { name:"Profile", url:`/profile/${loggedUser?._id}`, icon:<MdPerson />}
+        , {name:"Settings", url:"/settings", icon:<MdSettings />}
+        , {name:"Marketplace", url:"/marketplace", icon:<SiCoinmarketcap />}
+        , {name:"Notification", url:"/notifications", icon:<MdNotifications />}
+        , {name:"My Network", url:"/network", icon:<RiUserCommunityFill />}
     ],
 
     ])
     const {showSideBar, setShowSideBar} = ContextAPI()
     const [darkmode, setDarkMode] = useState(true)
-    const {loggedUser, setLoggedUser, selectedChat, setSelectedChat} = ContextAPI()
     const [navigate, setNavigate] = useState(false)
 
     useEffect(() => {
@@ -71,7 +71,7 @@ export const SideBar = ({children}) => {
     return (
         <>
         <div className="w-full dark:bg-gray-950 relative h-full  flex">
-        <aside className={`flex bg-scroll mt-0 bg-gray-400 ${showSideBar ? "w-full px-6 lg:w-[20%] lg:px-6" : "w-0"} transition-all duration-500 fixed top-0 z-40 bottom-0 left-0 flex-col h-screen overflow-y-auto bg-white border-r rtl:border-r-0 rtl:border-l dark:bg-gray-950 dark:border-gray-700`}>
+        <aside className={`flex bg-scroll mt-0 bg-gray-400 ${showSideBar ? "w-full px-6" : "w-0"} lg:w-[20%] lg:px-6 transition-all duration-500 fixed top-0 z-50 bottom-0 left-0 flex-col h-screen overflow-y-auto bg-white border-r rtl:border-r-0 rtl:border-l dark:bg-gray-950 dark:border-gray-700`}>
 
 
     <div className="flex flex-col py-10 justify-between  flex-1">
@@ -91,8 +91,8 @@ export const SideBar = ({children}) => {
 
             <div className={`flex ${loggedUser ? "block" : "hidden"} items-center justify-between mt-6`}>
                 <a href="#" className="flex items-center gap-x-2">
-                    <img className="object-cover rounded-full h-7 w-7" src="https://images.unsplash.com/photo-1531427186611-ecfd6d936c79?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=634&h=634&q=80" alt="avatar" />
-                    <span className="text-sm font-medium text-gray-700 dark:text-gray-200">John Doe</span>
+                    <img className="object-cover rounded-full h-7 w-7" src={loggedUser?.profilepic} alt="avatar" />
+                    <span className="text-sm font-medium text-gray-700 dark:text-gray-200">{loggedUser?.name}</span>
                 </a>
                 
                 <p onClick={logOut} className={`text-gray-500 cursor-pointer transition-colors duration-200 rotate-180 dark:text-gray-400 rtl:rotate-0 hover:text-blue-500 dark:hover:text-blue-400`}>
@@ -104,7 +104,7 @@ export const SideBar = ({children}) => {
         </div>
     </div>
 </aside>
-<div className={`${showSideBar ? "lg:w-[80%] lg:ml-[20%]" : "lg:w-full"} transition-all duration-500 relative h-auto w-full lg:min-h-screen`}>
+<div className={`${showSideBar ? "lg:w-[80%] lg:ml-[20%]" : "lg:w-full"} lg:w-[80%] lg:ml-[20%] transition-all duration-500 relative h-auto w-full lg:min-h-screen`}>
 
     <Nav />
 {children}

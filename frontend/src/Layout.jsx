@@ -4,9 +4,30 @@ import { SideBar } from './Components/SideBar'
 import { ContextAPI } from './ContextApi'
 import { MdArrowUpward } from 'react-icons/md'
 const Layout = () => {
-  const {loggedUser} = ContextAPI()
+  const {loggedUser, setAllConversations} = ContextAPI()
   const [scrollPosition, setScrollPosition] = useState({x:0, y:0})
   const [scrollTop, setScrollTop] = useState(false)
+
+
+  useEffect(() => {
+      const fetchEveryConversation = async () => {
+          try{
+                const res = await fetch(`http://localhost:7000/api/message/geteveryconversation`, {
+                              method:"GET",
+                              credentials:"include"
+                              })
+                if(!res.ok) throw new Error(res)
+          
+                const data = await res.json()
+                console.log("BRO THHIS ARE ALL YOUR CONVERSATIIONS---------------------------- ", data?.allConversations)
+                setAllConversations(data?.allConversations)
+          
+                } catch(error){
+                  console.log(error)
+                }
+          }
+          fetchEveryConversation()
+    }, [])
 
   useEffect(() => {
     //funtion to handle scroll event
@@ -19,7 +40,7 @@ const Layout = () => {
     //check if the user scrolled past 1vh
     const oneVhInPixels = window.innerHeight * 0.02;
     if(window.scrollY > 1000){
-      console.log("scrolle past 1vh: ", window.scrollY)
+      //console.log("scrolle past 1vh: ", window.scrollY)
       setScrollTop(true);
     } else {
       setScrollTop(false)
@@ -46,10 +67,10 @@ const Layout = () => {
   })
  }
  if(scrollTop){
-  console.log("it is time to scroll up babies...............................")
+  //console.log("it is time to scroll up babies...............................")
  }
 
-    console.log("this is the current window location", scrollPosition)
+    //console.log("this is the current window location", scrollPosition)
   return (
     <div className='w-screen relative overflow-y-scroll min-h-screen'>
     <SideBar>
