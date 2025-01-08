@@ -1,6 +1,5 @@
 import { useRef, useState } from "react"
 import { Link } from "react-router-dom"
-import imageOne from "../assets/ai-generated-8249225_1280.jpg"
 import { Ticker } from "./Ticker";
 import {FaMusic} from "react-icons/fa"
 import {CiSearch} from "react-icons/ci"
