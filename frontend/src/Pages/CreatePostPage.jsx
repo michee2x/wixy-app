@@ -3,6 +3,7 @@ import img from "../assets/ai-generated-8249225_1280.jpg"
 import img2 from "../assets/AdobeStock_645633031_Preview.jpeg"
 import {MdUploadFile} from "react-icons/md"
 import toast from 'react-hot-toast'
+import { ContextAPI } from '../ContextApi'
 
 /* 
     this component has a post logic.
@@ -16,6 +17,7 @@ import toast from 'react-hot-toast'
 */
 
 export const CreatePostPage = ({setPostMode, setPost, posts}) => {
+    const {APIOrigin} = ContextAPI()
     const [productData, setProductData] = useState({name:"", price:null, desc:"", category:"", instock:false})
     const fileRef = useRef(null)
     const videoFileRef = useRef(null)
@@ -52,7 +54,7 @@ export const CreatePostPage = ({setPostMode, setPost, posts}) => {
         e.preventDefault()
         try{
             console.log("this is the product data to be posted", {...productData, postimg:preview, postvideo:videoPreview || ""})
-            const res = await fetch("http://localhost:7000/api/post/createpost", {
+            const res = await fetch(`${APIOrigin}/api/post/createpost`, {
                 method:"POST",
                 headers:{"Content-Type" : "application/json"},
                 body:JSON.stringify({

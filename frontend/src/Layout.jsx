@@ -4,7 +4,7 @@ import { SideBar } from './Components/SideBar'
 import { ContextAPI } from './ContextApi'
 import { MdArrowUpward } from 'react-icons/md'
 const Layout = () => {
-  const {loggedUser, setAllConversations} = ContextAPI()
+  const {loggedUser, setAllConversations, APIOrigin} = ContextAPI()
   const [scrollPosition, setScrollPosition] = useState({x:0, y:0})
   const [scrollTop, setScrollTop] = useState(false)
 
@@ -12,7 +12,7 @@ const Layout = () => {
   useEffect(() => {
       const fetchEveryConversation = async () => {
           try{
-                const res = await fetch(`http://localhost:7000/api/message/geteveryconversation`, {
+                const res = await fetch(`${APIOrigin}/api/message/geteveryconversation`, {
                               method:"GET",
                               credentials:"include"
                               })

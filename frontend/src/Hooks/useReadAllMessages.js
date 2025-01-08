@@ -4,11 +4,11 @@ import { ContextAPI } from '../ContextApi'
 
 export const useReadAllMessages = () => {
     const {socket, messages, setMessages} = useSocketContext()
-    const {selectedChat, loggedUser} = ContextAPI()
+    const {selectedChat, loggedUser, APIOrigin} = ContextAPI()
 
      const fetchMessages = async (_id) => {
             try{
-                const res = await fetch(`http://localhost:7000/api/message/getconversation?chatUser=${_id}`, {
+                const res = await fetch(`${APIOrigin}/api/message/getconversation?chatUser=${_id}`, {
                     method:"GET",
                     credentials:"include"
                 })

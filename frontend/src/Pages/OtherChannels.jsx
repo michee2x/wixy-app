@@ -9,7 +9,7 @@ export const OtherChannels = () => {
         const fetchConnectFeed = async () => {
             try{
 
-                const res = await fetch("http://localhost:7000/api/user/suggestedusers", {
+                const res = await fetch(`${APIOrigin}/api/user/suggestedusers`, {
                     method:"GET",
                     credentials:"include"
                 })

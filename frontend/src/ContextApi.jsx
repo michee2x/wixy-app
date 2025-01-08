@@ -22,7 +22,7 @@ export const ContextProvider = ({children}) => {
     const [allConversations, setAllConversations] = useState([])
     const [selectedProduct, setSelectedProduct] = useState({})
 
-    useGetMyCart(setCart)
+    useGetMyCart(setCart, APIOrigin)
 
     /* useEffect(() => {
           const fetchEveryConversation = async () => {

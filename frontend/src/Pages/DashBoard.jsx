@@ -1,14 +1,16 @@
 import React, {useState, useEffect} from "react";
 import { Video } from "../Components/Video";
 import toast from "react-hot-toast";
+import { ContextAPI } from "../ContextApi";
 
 export const DashBoardPage = () => {
+    const {APIOrigin} = ContextAPI()
     const [post, setPost] = useState([]);
 
     useEffect(() => {
         const fetchPosts = async () => {
             try{
-                const res = await fetch("http://localhost:7000/api/post/getposts", {
+                const res = await fetch(`${APIOrigin}/api/post/getposts`, {
                     method:"GET",
                     credentials:"include"
                 })

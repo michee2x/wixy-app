@@ -51,7 +51,7 @@ export const ChatPage = () => {
     const {id} = useParams()
     const [inputText, setInputText] = useState({placeholder:"", mainholder:""})
     const {messages, setMessages, dbUsers, socket, typing, setTyping} = useSocketContext()
-    const {selectedChat, loggedUser, setSelectedChat, allConversations, setAllConversations,} = ContextAPI()
+    const {selectedChat, loggedUser, setSelectedChat, allConversations, setAllConversations, APIOrigin} = ContextAPI()
     const lastChatMessageRef = useRef(null)
     const chatDivRef = useRef(null)
 
@@ -97,7 +97,7 @@ export const ChatPage = () => {
         if(Object.keys(selectedChat).length > 0){
             try{
             
-             const res = await fetch(`http://localhost:7000/api/message/sendmessage?receiverId=${selectedChat?.participants[selectedChat?.participants[0]?._id === loggedUser?._id ? 1 : 0]?._id}`, {
+             const res = await fetch(`${APIOrigin}/api/message/sendmessage?receiverId=${selectedChat?.participants[selectedChat?.participants[0]?._id === loggedUser?._id ? 1 : 0]?._id}`, {
                 method:"POST",
                 headers:{"Content-Type" : "application/json"},
                 body:JSON.stringify({

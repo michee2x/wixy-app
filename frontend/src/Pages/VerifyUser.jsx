@@ -6,7 +6,7 @@ const VerifyUser = () => {
     const location = useLocation()
     const query = new URLSearchParams(location.search)
     const token = query.get("token")
-    const {darkmode, setDarkMode} = ContextAPI()
+    const {darkmode, setDarkMode, APIOrigin} = ContextAPI()
     const [error, setError] = useState("")
     const [loading, setLoading] = useState(true)
     const [verified, setVerified] = useState(false)
@@ -26,7 +26,7 @@ const VerifyUser = () => {
         const verify = async () => {
         setLoading(true)
         try{
-            const res = await fetch(`http://localhost:7000/api/auth/verify?token=${token}`,{
+            const res = await fetch(`${APIOrigin}/api/auth/verify?token=${token}`,{
                 method:"GET",
                 credentials:"include"
             })

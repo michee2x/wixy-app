@@ -12,7 +12,7 @@ export const ProfilePage = () => {
     const [loading, setLoading] = useState(false)
     const {id:userId} = useParams(null)
     const [editing, setEditing] = useState(false)
-    const {loggedUser, setLoggedUser} = ContextAPI()
+    const {loggedUser, setLoggedUser, APIOrigin} = ContextAPI()
     const [file, setFile] = useState({profilepic:null, profilecover:null})
     const [previewURL, setPreviewURL] = useState({profilepic:null, profilecover:null})
     const picRef = useRef(null)
@@ -34,7 +34,7 @@ export const ProfilePage = () => {
         const fetchOtherUsers = async () => {
                 console.log("this is the id to get the userprofile", userId)
             try{
-                const res = await fetch(`http://localhost:7000/api/user/userprofile/${userId}`, {
+                const res = await fetch(`${APIOrigin}/api/user/userprofile/${userId}`, {
                     method:"GET",
                     credentials:"include"
                 })
@@ -79,7 +79,7 @@ export const ProfilePage = () => {
             const Update = {[field]:objectUrl}
 
 
-             const res = await fetch("http://localhost:7000/api/user/updateProfile", {
+             const res = await fetch(`${APIOrigin}/api/user/updateProfile`, {
                 method:"POST",
                 headers:{"Content-Type" : "application/json"},
                 body:JSON.stringify({
@@ -116,7 +116,7 @@ export const ProfilePage = () => {
             const Update = {[editMode.field]:editInfo}
 
 
-             const res = await fetch("http://localhost:7000/api/user/updateProfile", {
+             const res = await fetch(`${APIOrigin}/api/user/updateProfile`, {
                 method:"POST",
                 headers:{"Content-Type" : "application/json"},
                 body:JSON.stringify({

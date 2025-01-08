@@ -1,12 +1,12 @@
 import React, {useEffect, useState} from 'react'
 import { ContextAPI } from '../ContextApi'
 
-export const useGetMyCart = (setCart) => {
+export const useGetMyCart = (setCart, APIOrigin) => {
 
    useEffect(() => {
         const fetchCart = async () => {
           try{
-            const res = await fetch("http://localhost:7000/api/user/getmycart", {
+            const res = await fetch(`${APIOrigin}/api/user/getmycart`, {
               method:"GET",
               credentials:"include"
             })

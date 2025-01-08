@@ -8,7 +8,7 @@ export const ProductPage = () => {
   const {id} = useParams()
   const [lastRoute, setLastRoute] = useState(null)
   const location = useLocation()
-  const {selectedProduct, setSelectedProduct, cart} = ContextAPI()
+  const {selectedProduct, setSelectedProduct, cart, APIOrigin} = ContextAPI()
   useEffect(() => {
     setLastRoute(location.pathname)
   }, [location])
@@ -17,7 +17,7 @@ export const ProductPage = () => {
   useEffect(() => {
         const getPost = async () => {
             try{
-                const res = await fetch(`http://localhost:7000/api/post/getuserpost/${id}`, {
+                const res = await fetch(`${APIOrigin}/api/post/getuserpost/${id}`, {
                     method:"GET",
                     credentials:"include"
                 })

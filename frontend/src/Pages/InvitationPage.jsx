@@ -8,13 +8,13 @@ import { ContextAPI } from '../ContextApi'
 
 export const InvitationPage = () => {
   const [sent, setSent] = useState(true);
-  const {loggedUser, setLoggedUser} = ContextAPI()
+  const {loggedUser, setLoggedUser, APIOrigin} = ContextAPI()
   const [request, setRequest] = useState({})
 
   useEffect(() => {
     const getMyRequests = async () => {
          try{
-                    const res = await fetch(`http://localhost:7000/api/user/requests`, {
+                    const res = await fetch(`${APIOrigin}/api/user/requests`, {
                     method:"GET",
                     credentials:"include"
                     })
@@ -33,7 +33,7 @@ export const InvitationPage = () => {
 
   const createConversation = async (_id) => {
     try{
-        const res = await fetch(`http://localhost:7000/api/message/createconversation?receiverId=${_id}`, {
+        const res = await fetch(`${APIOrigin}/api/message/createconversation?receiverId=${_id}`, {
           method:"GET",
           credentials:"include"
         })

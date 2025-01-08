@@ -16,7 +16,7 @@ export const ChannelsPage = () => {
     useListenMessages()
     const {messages, setMessages, dbUsers, socket, loading, conversationRepo, setConversationRepo} = useSocketContext()
     const [text, setText] = useState("")
-    const {selectedChat, loggedUser, allConversations, setAllConversations, setSelectedChat, lastChat, setLastChat} = ContextAPI()
+    const {selectedChat, loggedUser, allConversations, setAllConversations, setSelectedChat, lastChat, setLastChat, APIOrigin} = ContextAPI()
     const receiverId = selectedChat?._id
     const [load, setLoad] = useState(0)
     const  intervalRef = useRef(null)
@@ -31,7 +31,7 @@ export const ChannelsPage = () => {
                 }
           const fetchEveryConversation = async () => {
                try{
-                          const res = await fetch(`http://localhost:7000/api/message/geteveryconversation`, {
+                          const res = await fetch(`${APIOrigin}/api/message/geteveryconversation`, {
                           method:"GET",
                           credentials:"include"
                           })
@@ -70,7 +70,7 @@ export const ChannelsPage = () => {
 
 const storeAllConversationAsRead = async (_id) => {
     try{
-            const res = await fetch(`http://localhost:7000/api/message/readmessages?id=${_id}`, {
+            const res = await fetch(`${APIOrigin}/api/message/readmessages?id=${_id}`, {
                 method:"GET",
                 credentials:"include"
             })
