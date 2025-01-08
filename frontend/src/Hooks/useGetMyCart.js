@@ -13,7 +13,7 @@ export const useGetMyCart = (setCart, APIOrigin) => {
   
             if(!res.ok){
               const {error} = await res.json()
-              setError(error)
+              throw new Error(error)
             }
   
             const {cart} = await res.json()
