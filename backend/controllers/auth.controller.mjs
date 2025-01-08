@@ -143,26 +143,25 @@ export const logout = (req, res) => {
         console.log("loggedout successful")
     }
 }
-/*  const  generateToken = (payload, res) => {
-    console.log("i am generating it...")
+ const  generateToken = (payload, res) => {
     try{
     const token = jwt.sign({payload}, "thi is jwt secret", {
         expiresIn:`15d`
     })
     res.cookie("jwtToken", token, {
         maxAge: 15 * 24 * 60 * 60 * 1000,
-        sameSite:"None",
-        secure:false,
         httpOnly:true,
+        sameSite:"None",
+        secure: true,
     })
 
     } catch (error){
 console.log("there was an error in signup controller: ", error)
     }
-}  */
+}
 
 
-const  generateToken = (payload, res) => {
+/* const  generateToken = (payload, res) => {
     try{
     const token = jwt.sign({payload}, "thi is jwt secret", {
         expiresIn:`15d`
@@ -177,4 +176,4 @@ const  generateToken = (payload, res) => {
     } catch (error){
 console.log("there was an error in signup controller: ", error)
     }
-}
+} */

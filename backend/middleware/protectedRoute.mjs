@@ -8,12 +8,12 @@ try{
     
     if(!cookies) {
         console.log("no token found")
-    return res.status(401).json({error:"there i no token in your headers"})
+    return res.status(401).json({error:"there is no token in your headers"})
 }
 
     const decoded =  jwt.verify(cookies, "thi is jwt secret")
 
-    if(!decoded) return res.status(401).json({error:"invalid token i headers"})
+    if(!decoded) return res.status(401).json({error:"invalid token is headers"})
 
     const foundUser = await User.findById(decoded.payload)
 
