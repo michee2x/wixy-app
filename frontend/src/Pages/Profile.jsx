@@ -24,7 +24,7 @@ export const ProfilePage = () => {
         {icon:<MdPerson />, title:`${user?.username}`, desc:"username", field:"username"},
         {icon:<MdLocationOn />, title:`${user?.address || "no address"}`, desc:"Address", field:"address"},
         {icon:<BsGlobe />, title:`${user?.website || "no website"}`, desc:"website", field:"website"},
-        {icon:<MdMail />, title:`${user?.email}`, desc:"Email", desc:"email", field:"email"},
+        {icon:<MdMail />, title:`${user?.email}`, desc:"Email", field:"email"},
         {icon:<MdStoreMallDirectory />, title:`${user?.desc || "no description"}`, desc:"description", field:"desc"},
         {icon:<MdCall />, title:`${user?.number || "no phone number"}`, desc:"phone NO.", field:"number"}
     ]
