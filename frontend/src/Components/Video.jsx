@@ -1,8 +1,5 @@
 import { useRef, useState } from "react"
 import { Link } from "react-router-dom"
-import videoOne from "../assets/videoOne.mp4"
-import videoTwo from "../assets/videotwo.mp4"
-import videoThree from "../assets/videoThree.mp4"
 import imageOne from "../assets/ai-generated-8249225_1280.jpg"
 import { Ticker } from "./Ticker";
 import {FaMusic} from "react-icons/fa"
