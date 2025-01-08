@@ -220,7 +220,7 @@ export const suggestedUsers = async (req, res) => {
                 }
         ])
 
-        const filterOutUsersIFollow = users.filter((user) => !total?.following?.includes(user._id))
+        const filterOutUsersIFollow = users.filter((user) => !total?.includes(user._id))
         const suggestedUsers = filterOutUsersIFollow
         /* const suggestedUsers = filterOutUsersIFollow.slice(0, 4) */
         console.log("this is the suggested users", suggestedUsers)
