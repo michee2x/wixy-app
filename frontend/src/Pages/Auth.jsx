@@ -15,7 +15,7 @@ export const AuthPage = () => {
   const [navigate, setNavigate] = useState(false)
 
   const [loading, setLoading] = useState(false)
-  const {loggedUser, setLoggedUser} = ContextAPI()
+  const {loggedUser, setLoggedUser, APIOrigin} = ContextAPI()
 
 
 
@@ -23,7 +23,7 @@ export const AuthPage = () => {
       e.preventDefault()
       try{
         setLoading(true)
-         const res = await fetch(`http://localhost:7000/api/auth/${login ? "login" : "signup"}`, {
+         const res = await fetch(`${APIOrigin}/api/auth/${login ? "login" : "signup"}`, {
           method:"POST",
           headers:{"Content-Type":"application/json"},
           body:JSON.stringify({

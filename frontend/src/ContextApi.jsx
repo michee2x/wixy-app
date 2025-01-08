@@ -9,6 +9,7 @@ export const ContextAPI = () => {
 }
 
 export const ContextProvider = ({children}) => {
+    const APIOrigin = "https://wixy-backend.onrender.com"
     const [cart, setCart] = useState({})
     const [lastChat, setLastChat] = useState("")
     const [loggedUser, setLoggedUser] = useState(JSON.parse(localStorage.getItem("logged-user")) || null)
@@ -48,6 +49,7 @@ export const ContextProvider = ({children}) => {
      */
 
     return <Context.Provider value={{
+        APIOrigin,
         cart,
         lastChat, 
         setLastChat,
