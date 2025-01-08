@@ -7,7 +7,7 @@ import toast from "react-hot-toast"
 
 export const ProductDetail = () => {
   const {id:productID} = useParams()
-  const {selectedProduct, setSelectedProduct, loggedUser, cart} = ContextAPI()
+  const {selectedProduct, setSelectedProduct, loggedUser, cart, APIOrigin} = ContextAPI()
   const [navigate, setNavigate] = useState(false)
   useEffect(() => {
     Aos.init({duration:2000})
@@ -16,7 +16,7 @@ export const ProductDetail = () => {
 
 const moveToCart = async (id) => {
   try{
-      const res = await fetch(`http://localhost:7000/api/user/addtocart?id=${productID}`, {
+      const res = await fetch(`${APIOrigin}/api/user/addtocart?id=${productID}`, {
         method:"GET",
         credentials:"include"
       })

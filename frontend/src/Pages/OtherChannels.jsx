@@ -1,35 +1,12 @@
 import React, { useState, useEffect } from 'react'
 import { ContextAPI } from '../ContextApi'
 
-export const OtherChannels = () => {
-    const [feed, setFeed] = useState([])
+export const OtherChannels = ({feed, setFeed}) => {
     const {loggedUser} = ContextAPI()
-
-    useEffect(() => {
-        const fetchConnectFeed = async () => {
-            try{
-
-                const res = await fetch(`${APIOrigin}/api/user/suggestedusers`, {
-                    method:"GET",
-                    credentials:"include"
-                })
-                if(!res.ok) throw new Error(res)
-                
-                const data = await res.json()
-                console.log("this is the connect feed: ", data?.suggestedUsers)
-                setFeed(data?.suggestedUsers)
-
-            }catch(error){
-                console.log("this is the error in fetchConnectedFeed func", error)
-            }
-        }
-
-        fetchConnectFeed()
-    }, [])
 
     const  connectWithChannel = async (id) =>  {
         try{
-                const res = await fetch(`http://localhost:7000/api/user/connect/${id}`, {
+                const res = await fetch(`https://wixy-backend.onrender.com/api/user/connect/${id}`, {
                     method:"GET",
                     credentials:"include"
                 })

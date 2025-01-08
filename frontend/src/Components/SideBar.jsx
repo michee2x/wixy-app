@@ -30,7 +30,7 @@ export const SideBar = ({children}) => {
     ],
 
     ])
-    const {showSideBar, setShowSideBar} = ContextAPI()
+    const {showSideBar, setShowSideBar, APIOrigin} = ContextAPI()
     const [darkmode, setDarkMode] = useState(true)
     const [navigate, setNavigate] = useState(false)
 
@@ -46,7 +46,7 @@ export const SideBar = ({children}) => {
     const logOut = async () => {
         try{
 
-            const res = await fetch("http://localhost:7000/api/auth/logout", {
+            const res = await fetch(`${APIOrigin}/api/auth/logout`, {
                 method:"GET",
                 credentials:"include"
             })

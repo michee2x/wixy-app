@@ -2,9 +2,33 @@ import {MdSearch, MdAddBox, MdArrowRight} from "react-icons/md"
 import {IoChatboxEllipses} from "react-icons/io5"
 import { OtherChannels } from "./OtherChannels"
 import { Link } from "react-router-dom"
+import {useEffect, useState} from "react"
+import { ContextAPI } from "../ContextApi"
 
 export const YourNetworkPage = () => {
+    const [feed, setFeed] = useState([])
 
+    useEffect(() => {
+        const fetchConnectFeed = async () => {
+            try{
+
+                const res = await fetch(`https://wixy-backend.onrender.com/api/user/suggestedusers`, {
+                    method:"GET",
+                    credentials:"include"
+                })
+                if(!res.ok) throw new Error(res)
+                
+                const data = await res.json()
+                console.log("this is the connect feed: ", data?.suggestedUsers)
+                setFeed(data?.suggestedUsers)
+
+            }catch(error){
+                console.log("this is the error in fetchConnectedFeed func", error)
+            }
+        }
+
+        fetchConnectFeed()
+    }, [])
 
     return (
         <div className='w-full pt-16 lg:px-10 min-h-screen dark:bg-gray-950'>
@@ -29,7 +53,7 @@ export const YourNetworkPage = () => {
             <Link to={"/manage"} className="text-2xl text-blue-400"><MdArrowRight /></Link>
         </div>
 
-        <OtherChannels />
+        <OtherChannels feed={feed} setFeed={setFeed} />
     </div>
     )
 }
